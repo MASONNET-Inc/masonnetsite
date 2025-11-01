@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>MASONNET Web 3.0</title>
-  <meta name="description" content="MASONNET — minimal shell with interactive pill button bar" />
+  <meta name="description" content="MASONNET — responsive interactive pill button bar" />
   <style>
     :root{
       --bg: #ff0000;
@@ -13,17 +13,16 @@
       --panel: #121212;
       --focus: rgba(255,255,255,0.14);
       --shadow: 0 14px 40px rgba(0,0,0,0.35);
-      --bar-height: 64px; /* default, overridable by JS */
+      --bar-height: 64px;
       --bar-radius: 999px;
-      --bar-width: min(880px, calc(100% - 56px));
-      --button-gap: 12px;
+      --bar-gap: 12px;
       --icon-size: 20px;
-      --accent: rgba(255,255,255,0.06);
-      --glass-strong: rgba(255,255,255,0.08);
       --transition: 220ms cubic-bezier(.2,.9,.2,1);
+      --bar-min: 320px;
+      --bar-max: 1100px;
+      --bar-padding: 10px 14px;
     }
 
-    /* Basic page, centered header only */
     *{box-sizing:border-box}
     html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased}
     .page { min-height:100vh; display:flex; flex-direction:column; align-items:center; gap:16px; padding:36px 18px; justify-content:flex-start; }
@@ -32,20 +31,33 @@
     .logo { width:clamp(100px,16vw,300px); height:auto; display:block; }
     .title { margin:0; font-size:clamp(20px,3.6vw,36px); font-weight:800; letter-spacing:0.2px }
 
-    /* REMOVED central rectangle - page is intentionally blank below header */
+    /* Keep main empty canvas */
     main[role="main"]{ width:100%; max-width:1200px; min-height:0; margin:0; padding:0; }
 
-    /* Pill button bar shell */
-    .bar-wrap { position:fixed; left:50%; transform:translateX(-50%); bottom:24px; z-index:1400; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+    /* Pill bar wrapper centered and responsive */
+    .bar-wrap {
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:20px;
+      z-index:1400;
+      width:100%;
+      display:flex;
+      justify-content:center;
+      pointer-events:none;
+      padding:0 12px;
+    }
+
+    /* The bar itself uses clamp to fit any screen */
     .bar {
       pointer-events:auto;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap: var(--button-gap);
-      width: var(--bar-width);
+      gap: var(--bar-gap);
+      width: clamp(var(--bar-min), 82vw, var(--bar-max));
       height: var(--bar-height);
-      padding: 8px 14px;
+      padding: var(--bar-padding);
       background: linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0.02));
       border-radius: var(--bar-radius);
       box-shadow: var(--shadow);
@@ -53,21 +65,21 @@
       backdrop-filter: blur(8px);
       transition: transform var(--transition), width var(--transition), height var(--transition), box-shadow var(--transition), background var(--transition);
       transform-origin: center;
+      max-width: calc(100% - 24px);
     }
 
-    /* Visual resizing handle (left) and settings (right) */
-    .bar-left, .bar-center, .bar-right { display:flex; align-items:center; gap:var(--button-gap); }
-    .bar-left { margin-left:6px }
-    .bar-right { margin-right:6px }
+    .bar-left, .bar-center, .bar-right { display:flex; align-items:center; gap:var(--bar-gap); }
+    .bar-left { flex:0 0 auto; }
+    .bar-center { flex:1 1 auto; justify-content:center; }
+    .bar-right { flex:0 0 auto; }
 
-    /* Buttons */
     .pill-btn {
       all:unset;
       display:inline-flex;
       align-items:center;
       justify-content:center;
       gap:10px;
-      min-width:42px;
+      min-width:40px;
       height: calc(var(--bar-height) - 20px);
       padding:0 12px;
       border-radius:10px;
@@ -82,7 +94,6 @@
     .pill-btn:focus { outline: 3px solid var(--focus); outline-offset:4px; border-radius:10px; }
     .pill-btn:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(0,0,0,0.36); }
 
-    /* i icon special */
     .info {
       width: calc(var(--bar-height) - 12px);
       height: calc(var(--bar-height) - 12px);
@@ -97,37 +108,23 @@
     }
     .info:focus { outline:3px solid var(--focus); outline-offset:3px; }
 
-    /* Small icon visuals */
     .icon-svg { width: var(--icon-size); height: var(--icon-size); fill:currentColor; display:block; opacity:0.98 }
 
-    /* Resizer thumb (in-bar) */
-    .resizer {
-      width:20px; height:20px; border-radius:6px; cursor:ew-resize; display:inline-grid; place-items:center;
-      background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03);
-      transition: background 160ms;
-    }
-    .resizer:active { background: rgba(255,255,255,0.05); filter:brightness(0.98) }
-
-    /* Dragging state */
-    .bar.dragging { box-shadow: 0 22px 60px rgba(0,0,0,0.5); transform: translateY(-6px) scale(1.01) }
-
-    /* Compact mode for very small heights */
-    .bar.compact .pill-btn { padding:0 8px; min-width:36px; }
+    /* Compact behaviour when bar gets narrow */
     .bar.compact { height:48px }
+    .bar.compact .pill-btn { min-width:36px; padding:0 8px }
+    .bar.compact .info { min-width:40px; }
 
-    /* Animation when buttons reorder or hover */
-    .pill-btn span.label { display:none }
-    @media (min-width:540px) { .pill-btn span.label { display:inline-block; font-size:13px } }
+    /* subtle label visibility - show labels on wider viewports */
+    .pill-btn .label { display:none; font-size:13px; white-space:nowrap; }
+    @media (min-width:640px) { .pill-btn .label { display:inline-block } }
 
-    /* Live-resize indicator */
-    .size-indicator { font-size:12px; color:rgba(255,255,255,0.8); margin-left:8px; user-select:none; }
-
-    /* Make the whole bar keyboard friendly */
+    /* keyboard focus friendliness */
     .bar [role="button"]{ outline:none }
 
-    @media (max-width:520px){
-      :root{ --bar-width: calc(100% - 28px); --bar-height: 56px }
-      .resizer { display:none } /* hide resizer on tiny screens */
+    @media (max-width:420px){
+      :root{ --bar-gap:8px; --bar-height:56px }
+      .pill-btn .label { display:none }
     }
   </style>
 </head>
@@ -143,17 +140,14 @@
     </main>
   </div>
 
-  <!-- Pill-shaped interactive bar -->
+  <!-- Responsive pill bar with info icon inside -->
   <div class="bar-wrap" aria-hidden="false">
     <div class="bar" id="pillBar" role="toolbar" aria-label="Primary actions" tabindex="0">
       <div class="bar-left">
-        <div class="resizer" id="resizer" title="Drag to resize" aria-hidden="false" role="separator" aria-orientation="horizontal" tabindex="0">
-          <!-- small grip -->
-          <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9h10v2H7zM7 13h10v2H7z" fill="currentColor"/></svg>
-        </div>
+        <!-- optional left-side control (kept minimal) -->
       </div>
 
-      <div class="bar-center" id="barCenter" style="justify-content:center; flex:1;">
+      <div class="bar-center" id="barCenter" aria-hidden="false">
         <button class="pill-btn primary" id="btnHome" role="button" aria-label="Home" title="Home">
           <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z" fill="currentColor"/></svg>
           <span class="label">Home</span>
@@ -175,8 +169,7 @@
         </button>
       </div>
 
-      <div class="bar-right" style="flex:0 0 auto;">
-        <div class="size-indicator" id="sizeIndicator" aria-hidden="true" title="Bar width">—</div>
+      <div class="bar-right" aria-hidden="false">
         <button class="info" id="infoBtn" role="button" aria-label="Info" title="Info">
           <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.3" fill="none" stroke="currentColor" stroke-width="1.15"/><circle cx="12" cy="8.3" r="1.05" fill="currentColor"/><rect x="11.05" y="10.6" width="1.9" height="5.0" rx="0.55" fill="currentColor"/></svg>
         </button>
@@ -187,133 +180,52 @@
   <script>
     (function(){
       const bar = document.getElementById('pillBar');
-      const resizer = document.getElementById('resizer');
-      const sizeIndicator = document.getElementById('sizeIndicator');
-      const barCenter = document.getElementById('barCenter');
-      const MIN = 360; // min width px
-      const MAX = Math.min(window.innerWidth - 48, 1200); // max px for desktop
-      let dragging = false;
-      let startX = 0;
-      let startW = parseInt(getComputedStyle(bar).width, 10);
+      const btns = Array.from(bar.querySelectorAll('.pill-btn, .info'));
+      const MIN =  parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bar-min')) || 320;
+      const MAX =  parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bar-max')) || 1100;
 
-      // Initialize indicator
-      function updateIndicator() {
-        const w = Math.round(bar.getBoundingClientRect().width);
-        sizeIndicator.textContent = `${w}px`;
+      // Make the bar adapt height/compact state by current width
+      function adaptCompact() {
+        const w = bar.getBoundingClientRect().width;
+        if (w < 520) bar.classList.add('compact'); else bar.classList.remove('compact');
       }
-      updateIndicator();
+      adaptCompact();
+      window.addEventListener('resize', adaptCompact);
 
-      // Live resize using resizer drag
-      resizer.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        dragging = true;
-        startX = e.clientX;
-        startW = bar.getBoundingClientRect().width;
-        bar.classList.add('dragging');
-        resizer.setPointerCapture(e.pointerId);
+      // Simple keyboard navigation (left/right)
+      bar.addEventListener('keydown', (e) => {
+        const idx = btns.indexOf(document.activeElement);
+        if (e.key === 'ArrowLeft') { e.preventDefault(); const prev = btns[(idx - 1 + btns.length) % btns.length]; prev && prev.focus(); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); const next = btns[(idx + 1) % btns.length]; next && next.focus(); }
       });
 
-      window.addEventListener('pointermove', (e) => {
-        if (!dragging) return;
-        const dx = e.clientX - startX;
-        let newW = Math.min(MAX, Math.max(MIN, startW + dx));
-        bar.style.width = `${newW}px`;
-        bar.style.transition = 'none';
-        // compact class toggle based on height or width threshold
-        if (newW < 520) bar.classList.add('compact'); else bar.classList.remove('compact');
-        updateIndicator();
-      });
-
-      window.addEventListener('pointerup', (e) => {
-        if (!dragging) return;
-        dragging = false;
-        bar.classList.remove('dragging');
-        bar.style.transition = '';
-        updateIndicator();
-      });
-
-      // Keyboard support for resizer (arrow left/right to shrink/grow)
-      resizer.addEventListener('keydown', (e) => {
-        const step = 20;
-        let currentW = bar.getBoundingClientRect().width;
-        if (e.key === 'ArrowLeft') {
-          e.preventDefault();
-          currentW = Math.max(MIN, currentW - step);
-          bar.style.width = currentW + 'px';
-        }
-        if (e.key === 'ArrowRight') {
-          e.preventDefault();
-          currentW = Math.min(MAX, currentW + step);
-          bar.style.width = currentW + 'px';
-        }
-        updateIndicator();
-      });
-
-      // Drag the entire bar (move up/down a bit when dragging handle alt)
-      let barDrag = false;
-      bar.addEventListener('pointerdown', (e) => {
-        // allow dragging the bar vertically when holding Shift (optional)
-        if (!e.shiftKey) return;
-        barDrag = true;
-        bar.dataset.startY = e.clientY;
-        bar.classList.add('dragging');
-      });
-      window.addEventListener('pointermove', (e) => {
-        if (!barDrag) return;
-        const dy = e.clientY - Number(bar.dataset.startY || 0);
-        bar.style.transform = `translateX(-50%) translateY(${Math.max(-12, Math.min(20, -6 + dy))}px) scale(1.005)`;
-      });
-      window.addEventListener('pointerup', () => {
-        if (!barDrag) return;
-        barDrag = false;
-        bar.classList.remove('dragging');
-        bar.style.transform = '';
-      });
-
-      // Button interactions: subtle ripple-like micro animation
-      document.querySelectorAll('.pill-btn, .info').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          btn.animate([
+      // Micro animation on click for feedback
+      btns.forEach(b => {
+        b.addEventListener('click', () => {
+          b.animate([
             { transform: 'translateY(0) scale(1)' },
             { transform: 'translateY(-6px) scale(1.03)' },
             { transform: 'translateY(0) scale(1)' }
           ], { duration: 260, easing: 'cubic-bezier(.2,.9,.2,1)' });
-          // user can attach real handlers here
         });
       });
 
-      // Accessible keyboard navigation for buttons
-      const buttons = Array.from(bar.querySelectorAll('.pill-btn, .info'));
-      buttons.forEach(b => b.setAttribute('tabindex', '0'));
-      bar.addEventListener('keydown', (e) => {
-        const idx = buttons.indexOf(document.activeElement);
-        if (e.key === 'ArrowLeft') { e.preventDefault(); const prev = buttons[(idx - 1 + buttons.length) % buttons.length]; prev && prev.focus(); }
-        if (e.key === 'ArrowRight') { e.preventDefault(); const next = buttons[(idx + 1) % buttons.length]; next && next.focus(); }
-      });
-
-      // Update MAX on resize
-      window.addEventListener('resize', () => {
-        const wmax = Math.min(window.innerWidth - 48, 1200);
-        // if current width exceeds new max, clamp it
-        const curr = bar.getBoundingClientRect().width;
-        if (curr > wmax) { bar.style.width = wmax + 'px'; }
-        updateIndicator();
-      });
-
-      // Expose API for programmatic control
+      // Expose a small API for runtime tuning
       window.pillBar = {
-        setWidth(px) { bar.style.width = `${Math.max(MIN, Math.min(MAX, px))}px`; updateIndicator(); },
-        getWidth() { return Math.round(bar.getBoundingClientRect().width); },
-        setHeight(px) { document.documentElement.style.setProperty('--bar-height', `${px}px`); },
-        reset() { bar.style.width = ''; document.documentElement.style.removeProperty('--bar-height'); updateIndicator(); }
+        setWidth(px) {
+          const clamped = Math.max(MIN, Math.min(MAX, px));
+          bar.style.width = clamped + 'px';
+          adaptCompact();
+        },
+        resetWidth() {
+          bar.style.width = '';
+          adaptCompact();
+        },
+        setCompact(on) { bar.classList.toggle('compact', !!on); }
       };
 
-      // Init: ensure compact state set
-      if (bar.getBoundingClientRect().width < 520) bar.classList.add('compact');
-
-      // small visual polish: show current width briefly on load
-      setTimeout(()=> { sizeIndicator.style.opacity = '0.95'; setTimeout(()=> sizeIndicator.style.opacity = '0.6', 1200); }, 300);
-
+      // Place initial focus order
+      btns.forEach(b => b.setAttribute('tabindex','0'));
     })();
   </script>
 </body>
