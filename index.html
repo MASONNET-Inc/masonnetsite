@@ -4,110 +4,316 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>MASONNET Web 3.0</title>
-  <meta name="description" content="MASONNET" />
+  <meta name="description" content="MASONNET — minimal shell with interactive pill button bar" />
   <style>
     :root{
-      --bg:#ff0000;
-      --fg:#fff;
-      --glass:rgba(255,255,255,0.03);
-      --panel:#121212;
-      --safe-bottom:calc(env(safe-area-inset-bottom,0px) + 16px);
-      --island-max:980px;
-      --focus:rgba(255,255,255,0.12);
-      --shadow:0 10px 30px rgba(0,0,0,0.35);
-      --gap:12px;
+      --bg: #ff0000;
+      --fg: #fff;
+      --glass: rgba(255,255,255,0.04);
+      --panel: #121212;
+      --focus: rgba(255,255,255,0.14);
+      --shadow: 0 14px 40px rgba(0,0,0,0.35);
+      --bar-height: 64px; /* default, overridable by JS */
+      --bar-radius: 999px;
+      --bar-width: min(880px, calc(100% - 56px));
+      --button-gap: 12px;
+      --icon-size: 20px;
+      --accent: rgba(255,255,255,0.06);
+      --glass-strong: rgba(255,255,255,0.08);
+      --transition: 220ms cubic-bezier(.2,.9,.2,1);
     }
+
+    /* Basic page, centered header only */
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif;-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--fg)}
-    .page-wrapper{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:36px 18px}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased}
+    .page { min-height:100vh; display:flex; flex-direction:column; align-items:center; gap:16px; padding:36px 18px; justify-content:flex-start; }
 
-    /* Logo and site title separate, centered */
-    .top{width:100%;max-width:1200px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
-    .logo{width:clamp(120px,18vw,320px);height:auto;display:block}
-    .site-title{margin:0;font-size:clamp(20px,3.6vw,34px);font-weight:800}
+    .top { width:100%; max-width:1200px; display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; margin-top:6vh; }
+    .logo { width:clamp(100px,16vw,300px); height:auto; display:block; }
+    .title { margin:0; font-size:clamp(20px,3.6vw,36px); font-weight:800; letter-spacing:0.2px }
 
-    /* Main container intentionally empty (no placeholders) */
-    .container{width:100%;max-width:1200px;margin-top:18px;border-radius:14px;padding:22px;background:linear-gradient(180deg,rgba(0,0,0,0.02),rgba(0,0,0,0.01));box-shadow:var(--shadow);min-height:60vh}
-    /* remove inner content; container is a blank canvas for your app */
+    /* REMOVED central rectangle - page is intentionally blank below header */
+    main[role="main"]{ width:100%; max-width:1200px; min-height:0; margin:0; padding:0; }
 
-    /* Button island: center group centers all nav buttons; info icon sits on right */
-    .button-island{
-      position:fixed;left:50%;transform:translateX(-50%);bottom:var(--safe-bottom);
-      z-index:1200;display:flex;align-items:center;justify-content:space-between;
-      gap:var(--gap);width:min(calc(100% - 40px),var(--island-max));padding:10px;border-radius:14px;
-      background:var(--glass);box-shadow:0 10px 30px rgba(0,0,0,0.32);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.03)
+    /* Pill button bar shell */
+    .bar-wrap { position:fixed; left:50%; transform:translateX(-50%); bottom:24px; z-index:1400; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+    .bar {
+      pointer-events:auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: var(--button-gap);
+      width: var(--bar-width);
+      height: var(--bar-height);
+      padding: 8px 14px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0.02));
+      border-radius: var(--bar-radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.04);
+      backdrop-filter: blur(8px);
+      transition: transform var(--transition), width var(--transition), height var(--transition), box-shadow var(--transition), background var(--transition);
+      transform-origin: center;
     }
-    .center-group{flex:1 1 auto;display:flex;align-items:center;justify-content:center;gap:8px}
-    .right-group{flex:0 0 auto;display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-left:12px}
 
-    .btn{all:unset;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:10px;cursor:pointer;color:var(--fg);min-height:44px;line-height:1;border:1px solid transparent;transition:transform .12s,box-shadow .12s}
-    .btn.primary{background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02));font-weight:700;border:1px solid rgba(255,255,255,0.06)}
-    .btn:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,0.28)}
-    .btn:focus{outline:3px solid var(--focus);outline-offset:3px;border-radius:10px}
+    /* Visual resizing handle (left) and settings (right) */
+    .bar-left, .bar-center, .bar-right { display:flex; align-items:center; gap:var(--button-gap); }
+    .bar-left { margin-left:6px }
+    .bar-right { margin-right:6px }
 
-    .icon{width:22px;height:22px;display:inline-block;fill:currentColor;color:var(--fg);opacity:0.98}
-    .info-btn{width:48px;height:48px;display:inline-grid;place-items:center;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03)}
-    .info-btn:focus{outline:3px solid var(--focus);outline-offset:3px}
+    /* Buttons */
+    .pill-btn {
+      all:unset;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-width:42px;
+      height: calc(var(--bar-height) - 20px);
+      padding:0 12px;
+      border-radius:10px;
+      cursor:pointer;
+      color:var(--fg);
+      background: transparent;
+      border: 1px solid transparent;
+      transition: transform 160ms ease, background var(--transition), box-shadow var(--transition), border-color var(--transition);
+      user-select:none;
+    }
+    .pill-btn.primary { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); font-weight:700; border:1px solid rgba(255,255,255,0.06); }
+    .pill-btn:focus { outline: 3px solid var(--focus); outline-offset:4px; border-radius:10px; }
+    .pill-btn:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(0,0,0,0.36); }
 
-    /* small screens */
-    @media(max-width:520px){
-      .button-island{width:calc(100% - 26px);padding:8px}
-      .btn{padding:8px 10px}
-      .icon{width:18px;height:18px}
-      .container{min-height:40vh}
+    /* i icon special */
+    .info {
+      width: calc(var(--bar-height) - 12px);
+      height: calc(var(--bar-height) - 12px);
+      min-width:44px;
+      border-radius:12px;
+      display:inline-grid;
+      place-items:center;
+      background: transparent;
+      border:1px solid rgba(255,255,255,0.04);
+      cursor:pointer;
+      transition: transform 160ms ease, background var(--transition), box-shadow var(--transition);
+    }
+    .info:focus { outline:3px solid var(--focus); outline-offset:3px; }
+
+    /* Small icon visuals */
+    .icon-svg { width: var(--icon-size); height: var(--icon-size); fill:currentColor; display:block; opacity:0.98 }
+
+    /* Resizer thumb (in-bar) */
+    .resizer {
+      width:20px; height:20px; border-radius:6px; cursor:ew-resize; display:inline-grid; place-items:center;
+      background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03);
+      transition: background 160ms;
+    }
+    .resizer:active { background: rgba(255,255,255,0.05); filter:brightness(0.98) }
+
+    /* Dragging state */
+    .bar.dragging { box-shadow: 0 22px 60px rgba(0,0,0,0.5); transform: translateY(-6px) scale(1.01) }
+
+    /* Compact mode for very small heights */
+    .bar.compact .pill-btn { padding:0 8px; min-width:36px; }
+    .bar.compact { height:48px }
+
+    /* Animation when buttons reorder or hover */
+    .pill-btn span.label { display:none }
+    @media (min-width:540px) { .pill-btn span.label { display:inline-block; font-size:13px } }
+
+    /* Live-resize indicator */
+    .size-indicator { font-size:12px; color:rgba(255,255,255,0.8); margin-left:8px; user-select:none; }
+
+    /* Make the whole bar keyboard friendly */
+    .bar [role="button"]{ outline:none }
+
+    @media (max-width:520px){
+      :root{ --bar-width: calc(100% - 28px); --bar-height: 56px }
+      .resizer { display:none } /* hide resizer on tiny screens */
     }
   </style>
 </head>
 <body>
-  <div class="page-wrapper">
-    <!-- logo (centered) -->
-    <div class="top" role="banner" aria-label="MASONNET header">
+  <div class="page">
+    <header class="top" role="banner" aria-label="MASONNET header">
       <img src="logo.png" alt="MASONNET logo" class="logo" />
-      <h1 class="site-title">Welcome to MASONNET Web 3.0</h1>
-    </div>
+      <h1 class="title">Welcome to MASONNET Web 3.0</h1>
+    </header>
 
-    <!-- blank container: YOUR APPLICATION CONTENT SHOULD BE INSERTED HERE -->
-    <div class="container" id="appRoot" role="main" aria-label="Application root"></div>
+    <main role="main" aria-label="Application root">
+      <!-- Intentionally empty — your app mounts here -->
+    </main>
   </div>
 
-  <!-- button bar: centered actions in center-group; info icon alone on right-group -->
-  <nav class="button-island" role="navigation" aria-label="Primary navigation">
-    <div class="center-group" role="group" aria-label="Primary actions">
-      <button id="btnHome" class="btn primary" aria-label="Home" title="Home">
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z" fill="currentColor"/></svg>
-      </button>
+  <!-- Pill-shaped interactive bar -->
+  <div class="bar-wrap" aria-hidden="false">
+    <div class="bar" id="pillBar" role="toolbar" aria-label="Primary actions" tabindex="0">
+      <div class="bar-left">
+        <div class="resizer" id="resizer" title="Drag to resize" aria-hidden="false" role="separator" aria-orientation="horizontal" tabindex="0">
+          <!-- small grip -->
+          <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9h10v2H7zM7 13h10v2H7z" fill="currentColor"/></svg>
+        </div>
+      </div>
 
-      <button id="btnGames" class="btn" aria-label="Games" title="Games">
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10a4 4 0 0 0-4 4v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1a4 4 0 0 0-4-4H6z" fill="currentColor"/></svg>
-      </button>
+      <div class="bar-center" id="barCenter" style="justify-content:center; flex:1;">
+        <button class="pill-btn primary" id="btnHome" role="button" aria-label="Home" title="Home">
+          <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z" fill="currentColor"/></svg>
+          <span class="label">Home</span>
+        </button>
 
-      <button id="btnProjects" class="btn" aria-label="Projects" title="Projects">
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" fill="currentColor"/></svg>
-      </button>
+        <button class="pill-btn" id="btnGames" role="button" aria-label="Games" title="Games">
+          <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10a4 4 0 0 0-4 4v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1a4 4 0 0 0-4-4H6z" fill="currentColor"/></svg>
+          <span class="label">Games</span>
+        </button>
 
-      <button id="btnMore" class="btn" aria-label="More" title="More">
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="12" r="1.95" fill="currentColor"/><circle cx="12" cy="12" r="1.95" fill="currentColor"/><circle cx="18.5" cy="12" r="1.95" fill="currentColor"/></svg>
-      </button>
+        <button class="pill-btn" id="btnProjects" role="button" aria-label="Projects" title="Projects">
+          <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" fill="currentColor"/></svg>
+          <span class="label">Projects</span>
+        </button>
+
+        <button class="pill-btn" id="btnMore" role="button" aria-label="More" title="More">
+          <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="12" r="1.95" fill="currentColor"/><circle cx="12" cy="12" r="1.95" fill="currentColor"/><circle cx="18.5" cy="12" r="1.95" fill="currentColor"/></svg>
+          <span class="label">More</span>
+        </button>
+      </div>
+
+      <div class="bar-right" style="flex:0 0 auto;">
+        <div class="size-indicator" id="sizeIndicator" aria-hidden="true" title="Bar width">—</div>
+        <button class="info" id="infoBtn" role="button" aria-label="Info" title="Info">
+          <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.3" fill="none" stroke="currentColor" stroke-width="1.15"/><circle cx="12" cy="8.3" r="1.05" fill="currentColor"/><rect x="11.05" y="10.6" width="1.9" height="5.0" rx="0.55" fill="currentColor"/></svg>
+        </button>
+      </div>
     </div>
-
-    <div class="right-group" role="group" aria-label="Secondary actions">
-      <button id="infoBtn" class="info-btn" aria-label="Info" title="Info">
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.3" fill="none" stroke="currentColor" stroke-width="1.15"/><circle cx="12" cy="8.3" r="1.05" fill="currentColor"/><rect x="11.05" y="10.6" width="1.9" height="5.0" rx="0.55" fill="currentColor"/></svg>
-      </button>
-    </div>
-  </nav>
+  </div>
 
   <script>
     (function(){
-      // basic wiring only; no placeholders
-      const infoBtn = document.getElementById('infoBtn');
-      infoBtn.addEventListener('click', ()=> {
-        // noop by default — implement your behavior
-        alert('Info');
+      const bar = document.getElementById('pillBar');
+      const resizer = document.getElementById('resizer');
+      const sizeIndicator = document.getElementById('sizeIndicator');
+      const barCenter = document.getElementById('barCenter');
+      const MIN = 360; // min width px
+      const MAX = Math.min(window.innerWidth - 48, 1200); // max px for desktop
+      let dragging = false;
+      let startX = 0;
+      let startW = parseInt(getComputedStyle(bar).width, 10);
+
+      // Initialize indicator
+      function updateIndicator() {
+        const w = Math.round(bar.getBoundingClientRect().width);
+        sizeIndicator.textContent = `${w}px`;
+      }
+      updateIndicator();
+
+      // Live resize using resizer drag
+      resizer.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        dragging = true;
+        startX = e.clientX;
+        startW = bar.getBoundingClientRect().width;
+        bar.classList.add('dragging');
+        resizer.setPointerCapture(e.pointerId);
       });
 
-      // expose app root for your scripts
-      window.appRoot = document.getElementById('appRoot');
+      window.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        let newW = Math.min(MAX, Math.max(MIN, startW + dx));
+        bar.style.width = `${newW}px`;
+        bar.style.transition = 'none';
+        // compact class toggle based on height or width threshold
+        if (newW < 520) bar.classList.add('compact'); else bar.classList.remove('compact');
+        updateIndicator();
+      });
+
+      window.addEventListener('pointerup', (e) => {
+        if (!dragging) return;
+        dragging = false;
+        bar.classList.remove('dragging');
+        bar.style.transition = '';
+        updateIndicator();
+      });
+
+      // Keyboard support for resizer (arrow left/right to shrink/grow)
+      resizer.addEventListener('keydown', (e) => {
+        const step = 20;
+        let currentW = bar.getBoundingClientRect().width;
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          currentW = Math.max(MIN, currentW - step);
+          bar.style.width = currentW + 'px';
+        }
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          currentW = Math.min(MAX, currentW + step);
+          bar.style.width = currentW + 'px';
+        }
+        updateIndicator();
+      });
+
+      // Drag the entire bar (move up/down a bit when dragging handle alt)
+      let barDrag = false;
+      bar.addEventListener('pointerdown', (e) => {
+        // allow dragging the bar vertically when holding Shift (optional)
+        if (!e.shiftKey) return;
+        barDrag = true;
+        bar.dataset.startY = e.clientY;
+        bar.classList.add('dragging');
+      });
+      window.addEventListener('pointermove', (e) => {
+        if (!barDrag) return;
+        const dy = e.clientY - Number(bar.dataset.startY || 0);
+        bar.style.transform = `translateX(-50%) translateY(${Math.max(-12, Math.min(20, -6 + dy))}px) scale(1.005)`;
+      });
+      window.addEventListener('pointerup', () => {
+        if (!barDrag) return;
+        barDrag = false;
+        bar.classList.remove('dragging');
+        bar.style.transform = '';
+      });
+
+      // Button interactions: subtle ripple-like micro animation
+      document.querySelectorAll('.pill-btn, .info').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          btn.animate([
+            { transform: 'translateY(0) scale(1)' },
+            { transform: 'translateY(-6px) scale(1.03)' },
+            { transform: 'translateY(0) scale(1)' }
+          ], { duration: 260, easing: 'cubic-bezier(.2,.9,.2,1)' });
+          // user can attach real handlers here
+        });
+      });
+
+      // Accessible keyboard navigation for buttons
+      const buttons = Array.from(bar.querySelectorAll('.pill-btn, .info'));
+      buttons.forEach(b => b.setAttribute('tabindex', '0'));
+      bar.addEventListener('keydown', (e) => {
+        const idx = buttons.indexOf(document.activeElement);
+        if (e.key === 'ArrowLeft') { e.preventDefault(); const prev = buttons[(idx - 1 + buttons.length) % buttons.length]; prev && prev.focus(); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); const next = buttons[(idx + 1) % buttons.length]; next && next.focus(); }
+      });
+
+      // Update MAX on resize
+      window.addEventListener('resize', () => {
+        const wmax = Math.min(window.innerWidth - 48, 1200);
+        // if current width exceeds new max, clamp it
+        const curr = bar.getBoundingClientRect().width;
+        if (curr > wmax) { bar.style.width = wmax + 'px'; }
+        updateIndicator();
+      });
+
+      // Expose API for programmatic control
+      window.pillBar = {
+        setWidth(px) { bar.style.width = `${Math.max(MIN, Math.min(MAX, px))}px`; updateIndicator(); },
+        getWidth() { return Math.round(bar.getBoundingClientRect().width); },
+        setHeight(px) { document.documentElement.style.setProperty('--bar-height', `${px}px`); },
+        reset() { bar.style.width = ''; document.documentElement.style.removeProperty('--bar-height'); updateIndicator(); }
+      };
+
+      // Init: ensure compact state set
+      if (bar.getBoundingClientRect().width < 520) bar.classList.add('compact');
+
+      // small visual polish: show current width briefly on load
+      setTimeout(()=> { sizeIndicator.style.opacity = '0.95'; setTimeout(()=> sizeIndicator.style.opacity = '0.6', 1200); }, 300);
+
     })();
   </script>
 </body>
