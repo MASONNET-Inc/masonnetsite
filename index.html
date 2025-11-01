@@ -12,57 +12,60 @@
       --glass: rgba(255,255,255,0.04);
       --panel: #121212;
       --focus: rgba(255,255,255,0.14);
-      --shadow: 0 14px 40px rgba(0,0,0,0.35);
-      --bar-height: 64px;
+      --shadow: 0 18px 60px rgba(0,0,0,0.45);
+      /* Increased size: 4x bigger visual scale relative to previous baseline */
+      --bar-height: 256px;        /* 4x larger than ~64px baseline */
       --bar-radius: 999px;
-      --bar-gap: 12px;
-      --icon-size: 20px;
+      --bar-gap: 20px;
+      --icon-size: 56px;         /* larger icons to match */
       --transition: 220ms cubic-bezier(.2,.9,.2,1);
       --bar-min: 320px;
-      --bar-max: 1100px;
-      --bar-padding: 10px 14px;
+      --bar-max: 1400px;
+      --bar-padding: 18px 24px;
     }
 
     *{box-sizing:border-box}
     html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased}
+    /* page layout */
     .page { min-height:100vh; display:flex; flex-direction:column; align-items:center; gap:16px; padding:36px 18px; justify-content:flex-start; }
 
-    .top { width:100%; max-width:1200px; display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; margin-top:6vh; }
-    .logo { width:clamp(100px,16vw,300px); height:auto; display:block; }
-    .title { margin:0; font-size:clamp(20px,3.6vw,36px); font-weight:800; letter-spacing:0.2px }
+    /* centered logo + heading */
+    .top { width:100%; max-width:1400px; display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; margin-top:6vh; }
+    .logo { width:clamp(160px,18vw,420px); height:auto; display:block; }
+    .title { margin:0; font-size:clamp(28px,5.5vw,56px); font-weight:800; letter-spacing:0.2px; line-height:1; }
 
-    /* Keep main empty canvas */
-    main[role="main"]{ width:100%; max-width:1200px; min-height:0; margin:0; padding:0; }
+    /* keep main canvas empty (no placeholders) */
+    main[role="main"]{ width:100%; max-width:1400px; min-height:0; margin:0; padding:0; }
 
-    /* Pill bar wrapper centered and responsive */
+    /* bar wrapper fixed and always visible; pointer-events allowed only on bar itself */
     .bar-wrap {
       position:fixed;
       left:50%;
       transform:translateX(-50%);
-      bottom:20px;
-      z-index:1400;
+      bottom:24px;
+      z-index:99999;  /* ensure always on top */
       width:100%;
       display:flex;
       justify-content:center;
-      pointer-events:none;
+      pointer-events:none; /* allow clicks only on bar */
       padding:0 12px;
     }
 
-    /* The bar itself uses clamp to fit any screen */
+    /* bar: massively larger, pill-shaped, animated and responsive */
     .bar {
       pointer-events:auto;
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap: var(--bar-gap);
-      width: clamp(var(--bar-min), 82vw, var(--bar-max));
+      width: clamp(var(--bar-min), 90vw, var(--bar-max));
       height: var(--bar-height);
       padding: var(--bar-padding);
-      background: linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0.02));
+      background: linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.03));
       border-radius: var(--bar-radius);
       box-shadow: var(--shadow);
-      border: 1px solid rgba(255,255,255,0.04);
-      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
       transition: transform var(--transition), width var(--transition), height var(--transition), box-shadow var(--transition), background var(--transition);
       transform-origin: center;
       max-width: calc(100% - 24px);
@@ -73,57 +76,61 @@
     .bar-center { flex:1 1 auto; justify-content:center; }
     .bar-right { flex:0 0 auto; }
 
+    /* pill buttons scaled to match bar height */
     .pill-btn {
       all:unset;
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      gap:10px;
-      min-width:40px;
-      height: calc(var(--bar-height) - 20px);
-      padding:0 12px;
-      border-radius:10px;
+      gap:12px;
+      min-width:80px;
+      height: calc(var(--bar-height) - 56px);
+      padding:0 20px;
+      border-radius:18px;
       cursor:pointer;
       color:var(--fg);
       background: transparent;
       border: 1px solid transparent;
-      transition: transform 160ms ease, background var(--transition), box-shadow var(--transition), border-color var(--transition);
+      transition: transform 180ms ease, background var(--transition), box-shadow var(--transition), border-color var(--transition);
       user-select:none;
+      font-size:18px;
     }
-    .pill-btn.primary { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); font-weight:700; border:1px solid rgba(255,255,255,0.06); }
-    .pill-btn:focus { outline: 3px solid var(--focus); outline-offset:4px; border-radius:10px; }
-    .pill-btn:hover { transform: translateY(-4px); box-shadow: 0 14px 36px rgba(0,0,0,0.36); }
+    .pill-btn.primary { background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04)); font-weight:800; border:1px solid rgba(255,255,255,0.08); }
+    .pill-btn:hover { transform: translateY(-8px); box-shadow: 0 28px 80px rgba(0,0,0,0.48); }
+    .pill-btn:focus { outline: 4px solid var(--focus); outline-offset:6px; border-radius:18px; }
 
+    /* info icon now inside the bar and larger */
     .info {
-      width: calc(var(--bar-height) - 12px);
-      height: calc(var(--bar-height) - 12px);
-      min-width:44px;
-      border-radius:12px;
+      width: calc(var(--bar-height) - 48px);
+      height: calc(var(--bar-height) - 48px);
+      min-width:88px;
+      border-radius:18px;
       display:inline-grid;
       place-items:center;
       background: transparent;
-      border:1px solid rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.05);
       cursor:pointer;
       transition: transform 160ms ease, background var(--transition), box-shadow var(--transition);
+      font-size:20px;
     }
-    .info:focus { outline:3px solid var(--focus); outline-offset:3px; }
+    .info:focus { outline:4px solid var(--focus); outline-offset:6px; }
 
     .icon-svg { width: var(--icon-size); height: var(--icon-size); fill:currentColor; display:block; opacity:0.98 }
 
-    /* Compact behaviour when bar gets narrow */
-    .bar.compact { height:48px }
-    .bar.compact .pill-btn { min-width:36px; padding:0 8px }
-    .bar.compact .info { min-width:40px; }
+    /* compact behavior for narrow widths */
+    .bar.compact { height:160px; }
+    .bar.compact .pill-btn { min-width:56px; padding:0 12px; font-size:16px }
+    .bar.compact .info { min-width:72px; }
 
-    /* subtle label visibility - show labels on wider viewports */
-    .pill-btn .label { display:none; font-size:13px; white-space:nowrap; }
-    @media (min-width:640px) { .pill-btn .label { display:inline-block } }
+    /* label visibility */
+    .pill-btn .label { display:none; font-size:18px; white-space:nowrap; }
+    @media (min-width:900px) { .pill-btn .label { display:inline-block } }
 
-    /* keyboard focus friendliness */
+    /* ensure interactive focusability */
     .bar [role="button"]{ outline:none }
 
     @media (max-width:420px){
-      :root{ --bar-gap:8px; --bar-height:56px }
+      :root{ --bar-gap:10px; --bar-height:140px; --icon-size:42px }
       .pill-btn .label { display:none }
     }
   </style>
@@ -136,15 +143,15 @@
     </header>
 
     <main role="main" aria-label="Application root">
-      <!-- Intentionally empty — your app mounts here -->
+      <!-- intentionally empty: your app mounts here -->
     </main>
   </div>
 
-  <!-- Responsive pill bar with info icon inside -->
+  <!-- Always-visible, giant pill bar (info icon inside) -->
   <div class="bar-wrap" aria-hidden="false">
     <div class="bar" id="pillBar" role="toolbar" aria-label="Primary actions" tabindex="0">
       <div class="bar-left">
-        <!-- optional left-side control (kept minimal) -->
+        <!-- left slot (optional) -->
       </div>
 
       <div class="bar-center" id="barCenter" aria-hidden="false">
@@ -180,52 +187,54 @@
   <script>
     (function(){
       const bar = document.getElementById('pillBar');
-      const btns = Array.from(bar.querySelectorAll('.pill-btn, .info'));
-      const MIN =  parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bar-min')) || 320;
-      const MAX =  parseInt(getComputedStyle(document.documentElement).getPropertyValue('--bar-max')) || 1100;
-
-      // Make the bar adapt height/compact state by current width
-      function adaptCompact() {
+      const info = document.getElementById('infoBtn');
+      const buttons = Array.from(bar.querySelectorAll('.pill-btn, .info'));
+      // Ensure bar always visible: add high z-index and fixed positioning already set.
+      // Adapt compact class by width to keep it usable on small screens.
+      function adaptCompact(){
         const w = bar.getBoundingClientRect().width;
-        if (w < 520) bar.classList.add('compact'); else bar.classList.remove('compact');
+        if (w < 720) bar.classList.add('compact'); else bar.classList.remove('compact');
       }
       adaptCompact();
       window.addEventListener('resize', adaptCompact);
 
-      // Simple keyboard navigation (left/right)
-      bar.addEventListener('keydown', (e) => {
-        const idx = btns.indexOf(document.activeElement);
-        if (e.key === 'ArrowLeft') { e.preventDefault(); const prev = btns[(idx - 1 + btns.length) % btns.length]; prev && prev.focus(); }
-        if (e.key === 'ArrowRight') { e.preventDefault(); const next = btns[(idx + 1) % btns.length]; next && next.focus(); }
-      });
-
-      // Micro animation on click for feedback
-      btns.forEach(b => {
-        b.addEventListener('click', () => {
-          b.animate([
-            { transform: 'translateY(0) scale(1)' },
-            { transform: 'translateY(-6px) scale(1.03)' },
-            { transform: 'translateY(0) scale(1)' }
-          ], { duration: 260, easing: 'cubic-bezier(.2,.9,.2,1)' });
+      // Simple micro interaction: enlarge on hover and keyboard navigation
+      buttons.forEach(btn => {
+        btn.setAttribute('tabindex','0');
+        btn.addEventListener('click', () => {
+          btn.animate([{ transform:'translateY(0) scale(1)' }, { transform:'translateY(-12px) scale(1.06)' }, { transform:'translateY(0) scale(1)' }], { duration:300, easing:'cubic-bezier(.2,.9,.2,1)' });
         });
       });
 
-      // Expose a small API for runtime tuning
-      window.pillBar = {
-        setWidth(px) {
-          const clamped = Math.max(MIN, Math.min(MAX, px));
-          bar.style.width = clamped + 'px';
-          adaptCompact();
-        },
-        resetWidth() {
-          bar.style.width = '';
-          adaptCompact();
-        },
-        setCompact(on) { bar.classList.toggle('compact', !!on); }
-      };
+      // Keyboard navigation left/right
+      bar.addEventListener('keydown', (e) => {
+        const idx = buttons.indexOf(document.activeElement);
+        if (e.key === 'ArrowLeft') { e.preventDefault(); const prev = buttons[(idx - 1 + buttons.length) % buttons.length]; prev && prev.focus(); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); const next = buttons[(idx + 1) % buttons.length]; next && next.focus(); }
+      });
 
-      // Place initial focus order
-      btns.forEach(b => b.setAttribute('tabindex','0'));
+      // Info button default behavior (no placeholders): emit custom event so your app can handle it
+      info.addEventListener('click', ()=> {
+        const ev = new CustomEvent('masonnet:info', { bubbles:true });
+        window.dispatchEvent(ev);
+      });
+
+      // Expose simple API
+      window.MASONNET = {
+        setBarHeight(px){
+          document.documentElement.style.setProperty('--bar-height', `${px}px`);
+          adaptCompact();
+        },
+        setBarWidth(px){
+          bar.style.width = `${px}px`;
+          adaptCompact();
+        },
+        resetBar(){
+          bar.style.width = '';
+          document.documentElement.style.removeProperty('--bar-height');
+          adaptCompact();
+        }
+      };
     })();
   </script>
 </body>
