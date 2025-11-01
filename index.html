@@ -8,65 +8,65 @@
   <style>
     :root{
       --bg: #ff0000;
-      --fg: #fff;
+      --fg: #ffffff;
       --glass: rgba(255,255,255,0.04);
       --panel: #121212;
       --focus: rgba(255,255,255,0.14);
       --shadow: 0 18px 60px rgba(0,0,0,0.45);
-      /* Increased size: 4x bigger visual scale relative to previous baseline */
-      --bar-height: 256px;        /* 4x larger than ~64px baseline */
+      --bar-height: 120px;       /* large, but balanced */
       --bar-radius: 999px;
-      --bar-gap: 20px;
-      --icon-size: 56px;         /* larger icons to match */
+      --bar-gap: 14px;
+      --icon-size: 28px;
       --transition: 220ms cubic-bezier(.2,.9,.2,1);
-      --bar-min: 320px;
-      --bar-max: 1400px;
-      --bar-padding: 18px 24px;
+      --bar-min: 280px;
+      --bar-max: 1200px;
+      --bar-padding: 12px 20px;
     }
 
-    *{box-sizing:border-box}
+    /* Reset / base */
+    * { box-sizing: border-box; }
     html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased}
-    /* page layout */
-    .page { min-height:100vh; display:flex; flex-direction:column; align-items:center; gap:16px; padding:36px 18px; justify-content:flex-start; }
+    /* page center layout: ensure header is visually and semantically centered */
+    body { display:flex; align-items:center; justify-content:center; flex-direction:column; padding:36px 18px; gap:22px; min-height:100vh; }
 
-    /* centered logo + heading */
-    .top { width:100%; max-width:1400px; display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; margin-top:6vh; }
-    .logo { width:clamp(160px,18vw,420px); height:auto; display:block; }
-    .title { margin:0; font-size:clamp(28px,5.5vw,56px); font-weight:800; letter-spacing:0.2px; line-height:1; }
+    /* Top header: strict centering */
+    .top { width:100%; max-width:1200px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:8px; margin:0; }
+    .logo { width:clamp(140px,16vw,360px); height:auto; display:block; margin:0 auto; }
+    .title { margin:0; font-size:clamp(20px,4.8vw,44px); font-weight:800; line-height:1; letter-spacing:0.2px; }
 
-    /* keep main canvas empty (no placeholders) */
-    main[role="main"]{ width:100%; max-width:1400px; min-height:0; margin:0; padding:0; }
+    /* Main intentionally empty canvas for app injection */
+    main[role="main"]{ width:100%; max-width:1200px; min-height:0; margin:0; padding:0; }
 
-    /* bar wrapper fixed and always visible; pointer-events allowed only on bar itself */
+    /* Pill bar wrapper: always visible, responsive, pointer-events none on wrapper */
     .bar-wrap {
       position:fixed;
       left:50%;
       transform:translateX(-50%);
-      bottom:24px;
-      z-index:99999;  /* ensure always on top */
+      bottom:20px;
+      z-index:99999;
       width:100%;
       display:flex;
       justify-content:center;
-      pointer-events:none; /* allow clicks only on bar */
+      pointer-events:none; /* let only the bar handle events */
       padding:0 12px;
     }
 
-    /* bar: massively larger, pill-shaped, animated and responsive */
+    /* Bar: responsive width with clamp; always fits screen */
     .bar {
       pointer-events:auto;
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap: var(--bar-gap);
-      width: clamp(var(--bar-min), 90vw, var(--bar-max));
+      width: clamp(var(--bar-min), 86vw, var(--bar-max));
       height: var(--bar-height);
       padding: var(--bar-padding);
       background: linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.03));
       border-radius: var(--bar-radius);
       box-shadow: var(--shadow);
       border: 1px solid rgba(255,255,255,0.05);
-      backdrop-filter: blur(10px);
-      transition: transform var(--transition), width var(--transition), height var(--transition), box-shadow var(--transition), background var(--transition);
+      backdrop-filter: blur(8px);
+      transition: transform var(--transition), width var(--transition), height var(--transition), box-shadow var(--transition);
       transform-origin: center;
       max-width: calc(100% - 24px);
     }
@@ -76,83 +76,79 @@
     .bar-center { flex:1 1 auto; justify-content:center; }
     .bar-right { flex:0 0 auto; }
 
-    /* pill buttons scaled to match bar height */
+    /* Buttons scale to bar height */
     .pill-btn {
       all:unset;
       display:inline-flex;
       align-items:center;
       justify-content:center;
       gap:12px;
-      min-width:80px;
-      height: calc(var(--bar-height) - 56px);
-      padding:0 20px;
-      border-radius:18px;
+      min-width:56px;
+      height: calc(var(--bar-height) - 28px);
+      padding:0 14px;
+      border-radius:14px;
       cursor:pointer;
       color:var(--fg);
       background: transparent;
       border: 1px solid transparent;
-      transition: transform 180ms ease, background var(--transition), box-shadow var(--transition), border-color var(--transition);
+      transition: transform 160ms ease, background var(--transition), box-shadow var(--transition), border-color var(--transition);
       user-select:none;
-      font-size:18px;
+      font-size:16px;
     }
-    .pill-btn.primary { background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04)); font-weight:800; border:1px solid rgba(255,255,255,0.08); }
-    .pill-btn:hover { transform: translateY(-8px); box-shadow: 0 28px 80px rgba(0,0,0,0.48); }
-    .pill-btn:focus { outline: 4px solid var(--focus); outline-offset:6px; border-radius:18px; }
+    .pill-btn.primary { background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); font-weight:700; border:1px solid rgba(255,255,255,0.06); }
+    .pill-btn:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.48); }
+    .pill-btn:focus { outline: 4px solid var(--focus); outline-offset:6px; border-radius:14px; }
 
-    /* info icon now inside the bar and larger */
+    /* Info icon inside the bar */
     .info {
-      width: calc(var(--bar-height) - 48px);
-      height: calc(var(--bar-height) - 48px);
-      min-width:88px;
-      border-radius:18px;
+      width: calc(var(--bar-height) - 34px);
+      height: calc(var(--bar-height) - 34px);
+      min-width:56px;
+      border-radius:12px;
       display:inline-grid;
       place-items:center;
       background: transparent;
-      border:1px solid rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.04);
       cursor:pointer;
       transition: transform 160ms ease, background var(--transition), box-shadow var(--transition);
-      font-size:20px;
+      font-size:18px;
     }
     .info:focus { outline:4px solid var(--focus); outline-offset:6px; }
 
     .icon-svg { width: var(--icon-size); height: var(--icon-size); fill:currentColor; display:block; opacity:0.98 }
 
-    /* compact behavior for narrow widths */
-    .bar.compact { height:160px; }
-    .bar.compact .pill-btn { min-width:56px; padding:0 12px; font-size:16px }
-    .bar.compact .info { min-width:72px; }
+    /* Compact bar for very narrow widths: reduce height & labels */
+    .bar.compact { height:72px; }
+    .bar.compact .pill-btn { min-width:44px; padding:0 10px; font-size:14px; }
+    .bar.compact .info { min-width:44px; }
 
-    /* label visibility */
-    .pill-btn .label { display:none; font-size:18px; white-space:nowrap; }
-    @media (min-width:900px) { .pill-btn .label { display:inline-block } }
+    /* label visibility: hidden on small screens */
+    .pill-btn .label { display:none; font-size:16px; white-space:nowrap; }
+    @media (min-width:720px) { .pill-btn .label { display:inline-block } }
 
-    /* ensure interactive focusability */
+    /* keyboard-friendly */
     .bar [role="button"]{ outline:none }
 
     @media (max-width:420px){
-      :root{ --bar-gap:10px; --bar-height:140px; --icon-size:42px }
+      :root{ --bar-gap:10px; --bar-height:88px; --icon-size:20px }
       .pill-btn .label { display:none }
     }
   </style>
 </head>
 <body>
-  <div class="page">
-    <header class="top" role="banner" aria-label="MASONNET header">
-      <img src="logo.png" alt="MASONNET logo" class="logo" />
-      <h1 class="title">Welcome to MASONNET Web 3.0</h1>
-    </header>
-
-    <main role="main" aria-label="Application root">
-      <!-- intentionally empty: your app mounts here -->
-    </main>
+  <div class="top" role="banner" aria-label="MASONNET header">
+    <img src="logo.png" alt="MASONNET logo" class="logo" />
+    <h1 class="title">Welcome to MASONNET Web 3.0</h1>
   </div>
 
-  <!-- Always-visible, giant pill bar (info icon inside) -->
+  <main role="main" aria-label="Application root">
+    <!-- intentionally empty; your app mounts here -->
+  </main>
+
+  <!-- Always-visible responsive pill bar with info icon inside -->
   <div class="bar-wrap" aria-hidden="false">
     <div class="bar" id="pillBar" role="toolbar" aria-label="Primary actions" tabindex="0">
-      <div class="bar-left">
-        <!-- left slot (optional) -->
-      </div>
+      <div class="bar-left" aria-hidden="true"></div>
 
       <div class="bar-center" id="barCenter" aria-hidden="false">
         <button class="pill-btn primary" id="btnHome" role="button" aria-label="Home" title="Home">
@@ -187,53 +183,43 @@
   <script>
     (function(){
       const bar = document.getElementById('pillBar');
+      const btns = Array.from(bar.querySelectorAll('.pill-btn, .info'));
       const info = document.getElementById('infoBtn');
-      const buttons = Array.from(bar.querySelectorAll('.pill-btn, .info'));
-      // Ensure bar always visible: add high z-index and fixed positioning already set.
-      // Adapt compact class by width to keep it usable on small screens.
+
+      // adapt compact class by width for smaller screens
       function adaptCompact(){
         const w = bar.getBoundingClientRect().width;
-        if (w < 720) bar.classList.add('compact'); else bar.classList.remove('compact');
+        bar.classList.toggle('compact', w < 520);
       }
       adaptCompact();
       window.addEventListener('resize', adaptCompact);
 
-      // Simple micro interaction: enlarge on hover and keyboard navigation
-      buttons.forEach(btn => {
+      // keyboard navigation and micro animations
+      btns.forEach(btn => {
         btn.setAttribute('tabindex','0');
         btn.addEventListener('click', () => {
-          btn.animate([{ transform:'translateY(0) scale(1)' }, { transform:'translateY(-12px) scale(1.06)' }, { transform:'translateY(0) scale(1)' }], { duration:300, easing:'cubic-bezier(.2,.9,.2,1)' });
+          btn.animate([
+            { transform: 'translateY(0) scale(1)' },
+            { transform: 'translateY(-8px) scale(1.03)' },
+            { transform: 'translateY(0) scale(1)' }
+          ], { duration: 300, easing: 'cubic-bezier(.2,.9,.2,1)' });
         });
       });
 
-      // Keyboard navigation left/right
       bar.addEventListener('keydown', (e) => {
-        const idx = buttons.indexOf(document.activeElement);
-        if (e.key === 'ArrowLeft') { e.preventDefault(); const prev = buttons[(idx - 1 + buttons.length) % buttons.length]; prev && prev.focus(); }
-        if (e.key === 'ArrowRight') { e.preventDefault(); const next = buttons[(idx + 1) % buttons.length]; next && next.focus(); }
+        const idx = btns.indexOf(document.activeElement);
+        if (e.key === 'ArrowLeft') { e.preventDefault(); const prev = btns[(idx - 1 + btns.length) % btns.length]; prev && prev.focus(); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); const next = btns[(idx + 1) % btns.length]; next && next.focus(); }
       });
 
-      // Info button default behavior (no placeholders): emit custom event so your app can handle it
-      info.addEventListener('click', ()=> {
-        const ev = new CustomEvent('masonnet:info', { bubbles:true });
-        window.dispatchEvent(ev);
-      });
+      // info emits an event for your app to handle (no built-in placeholder)
+      info.addEventListener('click', ()=> window.dispatchEvent(new CustomEvent('masonnet:info')));
 
-      // Expose simple API
+      // public API for runtime tuning
       window.MASONNET = {
-        setBarHeight(px){
-          document.documentElement.style.setProperty('--bar-height', `${px}px`);
-          adaptCompact();
-        },
-        setBarWidth(px){
-          bar.style.width = `${px}px`;
-          adaptCompact();
-        },
-        resetBar(){
-          bar.style.width = '';
-          document.documentElement.style.removeProperty('--bar-height');
-          adaptCompact();
-        }
+        setBarHeight(px){ document.documentElement.style.setProperty('--bar-height', `${px}px`); adaptCompact(); },
+        setBarWidth(px){ bar.style.width = `${px}px`; adaptCompact(); },
+        resetBar(){ bar.style.width = ''; document.documentElement.style.removeProperty('--bar-height'); adaptCompact(); }
       };
     })();
   </script>
