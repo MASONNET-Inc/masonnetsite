@@ -55,10 +55,11 @@
       filter: drop-shadow(0 6px 18px rgba(0,0,0,0.25));
     }
 
+    /* Heading less bold and less heavy */
     h1{
       margin:10px 0 0;
       font-size: clamp(20px, 4.2vw, 36px);
-      font-weight:700;
+      font-weight:500; /* reduced weight */
       text-align:center;
       background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
       -webkit-background-clip: text;
@@ -66,31 +67,6 @@
       color: transparent;
     }
     h1 u{ text-decoration: underline; text-decoration-thickness:2px; text-decoration-color: rgba(255,255,255,0.35); }
-
-    .meta {
-      margin:12px auto 6px;
-      text-align:center;
-      color:var(--muted);
-      font-size: clamp(13px, 2.4vw, 16px);
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      align-items:center;
-    }
-
-    .meta .authors { opacity:0.95; font-weight:500; }
-    .meta .contact a { color:rgba(255,255,255,0.95); text-decoration:underline; }
-
-    .fancy-hr{
-      width:100%;
-      max-width:900px;
-      height:1px;
-      margin:12px auto;
-      background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.18), rgba(255,255,255,0.06));
-      border:none;
-      border-radius:1px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
-    }
 
     .main{
       max-width:980px;
@@ -161,31 +137,31 @@
 
     .button-island .info-btn svg{width:20px;height:20px;opacity:0.98}
 
-    /* Info panel: narrower and taller */
+    /* Info panel: right side, smaller width, taller feel */
     .info-panel{
       position: fixed;
-      left: 50%;
-      transform: translateX(-50%) translateY(16px);
+      right: 16px;               /* pinned to right */
       bottom: calc(var(--safe-bottom) + 80px);
       z-index: 1150;
-      width: clamp(240px, 80vw, 360px); /* less wide */
+      width: clamp(200px, 28vw, 320px); /* narrower */
       max-width: 92%;
-      max-height: calc(70vh);            /* taller available space */
-      min-height: 140px;
+      min-width: 180px;
+      max-height: calc(60vh);
+      min-height: 120px;
       box-sizing: border-box;
       overflow: auto;
       -webkit-overflow-scrolling: touch;
       background: linear-gradient(180deg, rgba(30,30,30,0.96), rgba(20,20,20,0.96));
       color:#fff;
-      padding:16px;
+      padding:12px;
       border-radius:12px;
       box-shadow: 0 12px 40px rgba(0,0,0,0.45);
       display:none;
-      gap:10px;
+      gap:8px;
       align-items:center;
       justify-content:center;
       text-align:center;
-      font-size:15px;
+      font-size:14px;
       word-break:break-word;
       white-space:normal;
     }
@@ -193,43 +169,43 @@
     .info-panel.visible{
       display:flex;
       flex-direction:column;
-      transform: translateX(-50%) translateY(0);
+      transform: translateY(0);
     }
 
     .info-panel .row{
       width:100%;
       display:flex;
       justify-content:center;
-      gap:10px;
+      gap:8px;
       align-items:center;
       flex-wrap:wrap;
     }
 
-    .info-panel .version-tag{ font-weight:700; background:rgba(255,255,255,0.04); padding:8px 12px; border-radius:999px; }
-    .info-panel .authors{ opacity:0.92; font-weight:500; }
-    .info-panel .contact-link{ display:inline-block; margin-top:8px; color:#fff; text-decoration:underline; font-weight:600; }
+    .info-panel .version-tag{ font-weight:700; background:rgba(255,255,255,0.04); padding:6px 10px; border-radius:999px; font-size:13px; }
+    .info-panel .authors{ opacity:0.92; font-weight:500; font-size:13px; }
+    .info-panel .contact-link{ display:inline-block; margin-top:8px; color:#fff; text-decoration:underline; font-weight:600; font-size:13px; }
 
     /* embedded view badge inside the panel */
     .panel-view {
       display:flex;
-      gap:10px;
+      gap:8px;
       align-items:center;
       justify-content:center;
-      padding:8px 12px;
+      padding:6px 10px;
       background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
       border-radius:999px;
       font-weight:700;
-      font-size:14px;
+      font-size:13px;
       box-shadow: 0 6px 18px rgba(0,0,0,0.16);
-      min-width:120px;
+      min-width:100px;
     }
 
-    .panel-view .eye { width:18px;height:18px; display:inline-block; opacity:0.95; }
+    .panel-view .eye { width:16px;height:16px; display:inline-block; opacity:0.95; }
 
     @media (max-width:520px){
       .button-island{ gap:8px; padding:10px; width: calc(100% - 24px) }
       .button-island .info-btn{ width:44px; height:44px }
-      .info-panel{ bottom: calc(var(--safe-bottom) + 72px); width: min(92%,320px); max-height: calc(72vh) }
+      .info-panel{ right: 12px; bottom: calc(var(--safe-bottom) + 72px); width: min(86vw, 300px); max-height: 65vh; }
     }
 
     @media (hover:none){
@@ -245,22 +221,15 @@
   <div class="page" id="page">
     <header class="site-header" role="banner">
       <img src="logo.png" alt="MASONNET logo" class="logo" />
-      <h1><strong>Welcome to MASONNET Web <u>3.0</u>!</strong></h1>
+      <h1>Welcome to MASONNET Web <u>3.0</u>!</h1>
     </header>
 
-    <div class="meta" role="contentinfo">
-      <div class="authors">by Mason Murphy & MASONNET</div>
-      <div class="contact"> <a href="mailto:masonnet@masonnet.org">Contact Us</a></div>
-    </div>
-
-    <hr class="fancy-hr" />
-
     <main class="main" role="main">
-      <!-- Core site content -->
+      <!-- intentionally left empty below the heading as requested -->
     </main>
   </div>
 
-  <!-- Info panel (contains view counter now) -->
+  <!-- Info panel now on the right and smaller -->
   <div class="info-panel" id="infoPanel" role="dialog" aria-hidden="true" aria-live="polite" tabindex="-1">
     <div class="row">
       <div class="version-tag">Version 1 - In development</div>
@@ -272,7 +241,7 @@
 
     <div class="row" style="margin-top:6px;">
       <div class="panel-view" aria-hidden="false" id="panelView">
-        <svg class="eye" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+        <svg class="eye" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false" width="16" height="16">
           <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke="white" stroke-opacity="0.9" stroke-width="1.2" fill="none"/>
           <circle cx="12" cy="12" r="3" fill="white" />
         </svg>
@@ -303,7 +272,7 @@
 
   <script>
     (function(){
-      // Config
+      // View counter logic with "recent visit" suppression
       const viewsLabel = document.getElementById('viewsLabel');
       const localVisitKey = 'masonnet_org_lastvisit';
       const storedCountKey = 'masonnet_org_localcount';
@@ -328,7 +297,6 @@
         try { return localStorage.getItem(key); } catch(e){ return null; }
       }
 
-      // Check last visit; if within threshold, don't increment global counter
       const lastVisit = parseInt(safeGetLocal(localVisitKey) || '0', 10);
       const now = Date.now();
       const withinThreshold = !isNaN(lastVisit) && (now - lastVisit) < threshold;
@@ -342,7 +310,6 @@
               setViews(data.value);
               safeSetLocal(storedCountKey, data.value);
             } else {
-              // fallback to local value if provided
               const localVal = parseInt(safeGetLocal(storedCountKey) || '0', 10);
               setViews(isNaN(localVal) ? '—' : localVal);
             }
@@ -372,7 +339,7 @@
                 if (data && typeof data.value === 'number') {
                   setViews(data.value);
                   safeSetLocal(storedCountKey, data.value);
-                  safeSetLocal(localVisitKey, now); // mark local visit anyway
+                  safeSetLocal(localVisitKey, now); // mark local visit
                 } else {
                   throw new Error('invalid get');
                 }
@@ -421,15 +388,14 @@
       }, {capture:true});
       document.addEventListener('keydown', (e)=> { if(e.key === 'Escape') togglePanel(false); });
 
-      // Responsive adjustment: ensure panel width never exceeds viewport
+      // Keep panel width within viewport on resize
       function adjustInfoPanel(){
         const win = window.innerWidth;
-        if(infoPanel.offsetWidth > win - 40) infoPanel.style.width = (win - 40) + 'px';
+        if(infoPanel.offsetWidth > win - 32) infoPanel.style.width = (win - 32) + 'px';
         else infoPanel.style.width = '';
       }
       window.addEventListener('resize', adjustInfoPanel);
       adjustInfoPanel();
-
     })();
   </script>
 </body>
