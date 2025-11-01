@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>MASONNET Web 3.0</title>
-  <meta name="description" content="MASONNET Web 3.0 — demo site" />
+  <meta name="description" content="MASONNET Web 3.0" />
   <style>
     :root{
       --bg:#ff0000;
@@ -60,7 +60,7 @@
     .table th,.table td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--muted);font-size:14px}
     .table th{color:#fff;font-weight:700;text-align:left}
 
-    /* Fixed floating button bar (visually distinct and accessible) */
+    /* Button island - centered content except info icon (placed to right) */
     .button-island {
       position:fixed;
       left:50%;
@@ -80,7 +80,24 @@
       border: 1px solid rgba(255,255,255,0.03);
     }
 
-    .button-group { display:flex; gap:8px; align-items:center; }
+    /* Center group container */
+    .center-group {
+      flex: 1 1 auto;
+      display:flex;
+      align-items:center;
+      justify-content:center; /* center all buttons */
+      gap:8px;
+    }
+
+    .right-group {
+      flex: 0 0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:8px;
+      margin-left:12px;
+    }
+
     .btn {
       all:unset;
       display:inline-flex;
@@ -146,47 +163,18 @@
 
     <!-- Main container -->
     <div class="container" role="main" aria-labelledby="overviewTitle">
-      <p class="lead">A living, production-ready layout: responsive, accessible, and ready to receive your real content.</p>
+      <p class="lead">Production-ready layout. Replace with your application content.</p>
 
       <div class="grid" aria-live="polite">
         <main>
           <section class="card" aria-labelledby="overviewTitle">
             <h3 id="overviewTitle">Overview</h3>
-            <p>This is the real UI — no placeholders. Replace the copy and components below with your production content. The logo and title are intentionally separate and centered above.</p>
+            <p>Core UI, navigation and components are integrated below. Integrate your real app modules where appropriate.</p>
           </section>
 
           <section class="card" style="margin-top:16px" aria-labelledby="playTitle">
-            <h3 id="playTitle">Interactive Playground</h3>
-            <p>Responsive tiles and sample table. Use these as real components or swap them for your app sections.</p>
-
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px">
-              <div class="card" style="padding:14px">
-                <h4 style="margin:0 0 8px;color:#fff">Tile A</h4>
-                <p style="margin:0 0 8px">Real content block.</p>
-                <div style="display:flex;gap:8px">
-                  <button class="btn primary" aria-label="Action A" data-tooltip="Primary action A"><span class="icon" aria-hidden="true">▶</span>Action</button>
-                  <button class="btn ghost" aria-label="Details A" data-tooltip="Details for A">Details</button>
-                </div>
-              </div>
-
-              <div class="card" style="padding:14px">
-                <h4 style="margin:0 0 8px;color:#fff">Tile B</h4>
-                <p style="margin:0 0 8px">Real component area.</p>
-                <div style="display:flex;gap:8px">
-                  <button class="btn primary" aria-label="Open B" data-tooltip="Open B">Open</button>
-                  <button class="btn ghost" aria-label="Share B" data-tooltip="Share B">Share</button>
-                </div>
-              </div>
-
-              <div class="card" style="padding:14px">
-                <h4 style="margin:0 0 8px;color:#fff">Tile C</h4>
-                <p style="margin:0 0 8px">Replace this with your real module.</p>
-                <div style="display:flex;gap:8px">
-                  <button class="btn primary" aria-label="Edit C" data-tooltip="Edit C">Edit</button>
-                  <button class="btn ghost" aria-label="Remove C" data-tooltip="Remove C">Remove</button>
-                </div>
-              </div>
-            </div>
+            <h3 id="playTitle">Main Module</h3>
+            <p>Insert your primary application content in this section.</p>
 
             <div style="margin-top:16px;overflow:auto">
               <table class="table" role="table" aria-label="Data table">
@@ -203,8 +191,8 @@
           </section>
 
           <section class="card" style="margin-top:16px" aria-labelledby="docsTitle">
-            <h3 id="docsTitle">Docs & Notes</h3>
-            <p>Replace this with your real documentation and operational notes.</p>
+            <h3 id="docsTitle">Documentation</h3>
+            <p>Link your documentation and operational instructions here.</p>
           </section>
         </main>
 
@@ -238,22 +226,9 @@
     </div>
   </div>
 
-  <!-- Info panel (hidden by default) -->
-  <div id="infoPanel" class="info-panel" role="dialog" aria-hidden="true" tabindex="-1" style="display:none; position:fixed; right:16px; bottom:calc(var(--safe-bottom) + 80px); z-index:1250; width:280px; background:var(--panel); color:#fff; padding:12px; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.45);">
-    <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
-      <div style="background:rgba(255,255,255,0.03);padding:6px 10px;border-radius:999px;font-weight:700;font-size:13px">Version 1.0</div>
-      <div style="font-size:13px;color:var(--muted)">by Mason Murphy & MASONNET</div>
-      <div style="display:inline-flex;gap:10px;align-items:center;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.02);font-weight:700;font-size:14px;margin-top:10px">
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z" fill="currentColor"/></svg>
-        <span id="viewsLabel2">—</span>
-      </div>
-      <a href="mailto:masonnet@masonnet.org" style="color:var(--muted);text-decoration:underline">Contact Us</a>
-    </div>
-  </div>
-
-  <!-- Fixed button bar (centered) -->
+  <!-- Fixed button bar: center-group centers all nav buttons, info icon sits in right-group -->
   <nav class="button-island" role="navigation" aria-label="Primary navigation">
-    <div class="button-group" role="group" aria-label="Primary actions">
+    <div class="center-group" role="group" aria-label="Primary actions">
       <button id="btnHome" class="btn primary" data-tooltip="Home" aria-label="Home">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z" fill="currentColor"/></svg>
         <span style="font-size:13px">Home</span>
@@ -272,10 +247,10 @@
       <button id="btnMore" class="btn" data-tooltip="More" aria-label="More">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="12" r="1.95" fill="currentColor"/><circle cx="12" cy="12" r="1.95" fill="currentColor"/><circle cx="18.5" cy="12" r="1.95" fill="currentColor"/></svg>
         <span style="font-size:13px">More</span>
-      </div>
+      </button>
     </div>
 
-    <div class="button-group" role="group" aria-label="Secondary actions">
+    <div class="right-group" role="group" aria-label="Secondary actions">
       <button id="infoBtn" class="info-btn" data-tooltip="Info" aria-label="Info" title="Info">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.3" fill="none" stroke="currentColor" stroke-width="1.15"/><circle cx="12" cy="8.3" r="1.05" fill="currentColor"/><rect x="11.05" y="10.6" width="1.9" height="5.0" rx="0.55" fill="currentColor"/></svg>
       </button>
@@ -294,18 +269,14 @@
       // Info panel toggle (a11y)
       let lastFocus = null;
       function toggleInfo(force){
-        const show = typeof force === 'boolean' ? force : !infoPanel.classList.contains('visible');
+        const show = typeof force === 'boolean' ? force : infoPanel && !infoPanel.classList.contains('visible');
         if (show){
           lastFocus = document.activeElement;
-          infoPanel.style.display = 'block';
-          infoPanel.classList.add('visible');
-          infoPanel.setAttribute('aria-hidden','false');
+          if (infoPanel){ infoPanel.style.display = 'block'; infoPanel.classList.add('visible'); infoPanel.setAttribute('aria-hidden','false'); }
           infoBtn.setAttribute('aria-expanded','true');
-          try{ infoPanel.focus({preventScroll:true}); }catch(e){}
+          try{ infoPanel && infoPanel.focus({preventScroll:true}); }catch(e){}
         } else {
-          infoPanel.style.display = 'none';
-          infoPanel.classList.remove('visible');
-          infoPanel.setAttribute('aria-hidden','true');
+          if (infoPanel){ infoPanel.style.display = 'none'; infoPanel.classList.remove('visible'); infoPanel.setAttribute('aria-hidden','true'); }
           infoBtn.setAttribute('aria-expanded','false');
           try{ if (lastFocus) lastFocus.focus(); }catch(e){}
         }
@@ -313,40 +284,33 @@
       infoBtn.addEventListener('click', ()=> toggleInfo());
       infoBtn.addEventListener('keydown', (e)=> { if (e.key==='Enter' || e.key===' ') { e.preventDefault(); toggleInfo(); } });
       document.addEventListener('click', (e)=> {
-        if (!infoPanel.classList.contains('visible')) return;
+        if (!infoPanel || !infoPanel.classList.contains('visible')) return;
         if (infoPanel.contains(e.target) || infoBtn.contains(e.target)) return;
         toggleInfo(false);
       }, {capture:true});
       document.addEventListener('keydown', (e)=> { if (e.key === 'Escape') toggleInfo(false); });
 
-      // Simple navigation demos (scroll to sections)
-      function flash(card){
-        if(!card) return;
-        const c = card.closest('.card') || card;
-        c.style.transition = 'box-shadow .22s, transform .18s';
-        c.style.boxShadow = '0 12px 40px rgba(0,0,0,0.45)';
-        c.style.transform = 'translateY(-4px)';
-        setTimeout(()=>{ c.style.boxShadow=''; c.style.transform=''; }, 400);
+      // Simple navigation: scroll to sections and pulse
+      function pulse(elem){
+        if(!elem) return;
+        const card = elem.closest('.card') || elem;
+        card.style.transition = 'box-shadow .22s, transform .18s';
+        card.style.boxShadow = '0 12px 40px rgba(0,0,0,0.45)';
+        card.style.transform = 'translateY(-4px)';
+        setTimeout(()=>{ card.style.boxShadow=''; card.style.transform=''; }, 420);
       }
-      btnHome.addEventListener('click', ()=> { const el=document.querySelector('#overviewTitle'); if(el) { el.scrollIntoView({behavior:'smooth',block:'center'}); flash(el); } });
-      btnGames.addEventListener('click', ()=> { const el=document.querySelector('#playTitle'); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); flash(el); } });
-      btnProjects.addEventListener('click', ()=> { const el=document.querySelector('#docsTitle'); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); flash(el); } });
-      btnMore.addEventListener('click', ()=> { toggleInfo(true); });
+      btnHome.addEventListener('click', ()=> { const el=document.querySelector('#overviewTitle'); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); pulse(el); }});
+      btnGames.addEventListener('click', ()=> { const el=document.querySelector('#playTitle'); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); pulse(el); }});
+      btnProjects.addEventListener('click', ()=> { const el=document.querySelector('#docsTitle'); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); pulse(el); }});
+      btnMore.addEventListener('click', ()=> toggleInfo(true));
 
-      // View counter simple (reads fallback)
-      (function viewCounter(){
-        const el = document.getElementById('viewsLabel');
-        const el2 = document.getElementById('viewsLabel2');
-        if(!el) return;
-        el.textContent = '—';
-        if(el2) el2.textContent = '—';
-      })();
+      // Views placeholder reset
+      (function viewCounter(){ const el=document.getElementById('viewsLabel'); if(el) el.textContent='—'; const el2=document.getElementById('viewsLabel2'); if(el2) el2.textContent='—'; })();
 
-      // Accessibility: make buttons keyboard-focusable
-      (function a11y(){
-        document.querySelectorAll('.btn, .info-btn').forEach(b => { if(!b.hasAttribute('tabindex')) b.setAttribute('tabindex','0'); });
-      })();
+      // Accessibility: ensure buttons keyboard-accessible
+      (function a11y(){ document.querySelectorAll('.btn, .info-btn').forEach(b => { if(!b.hasAttribute('tabindex')) b.setAttribute('tabindex','0'); }); })();
     })();
   </script>
 </body>
 </html>
+```[43dcd9a7-70db-4a1f-b0ae-981daa162054](https://github.com/surajpaul/testGlamyo/tree/f2a4b1204fbd789dccb3fbb4a648267620600ca8/resources%2Fviews%2Fauth%2Fregister.blade.php?citationMarker=43dcd9a7-70db-4a1f-b0ae-981daa162054&citationId=1 "github.com")
