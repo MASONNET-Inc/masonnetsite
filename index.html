@@ -1,57 +1,194 @@
-<html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>MASONNET Web 3.0</title>
   <style>
-    body {
-  font-family: Arial, sans-serif;
-      background-color: red;
+    :root{
+      --bg:#e84b4b;          /* background color */
+      --glass: rgba(255,255,255,0.12);
+      --glass-strong: rgba(255,255,255,0.26);
+      --accent:#ffffff;
+      --shadow: 0 6px 18px rgba(0,0,0,0.15);
+      --max-content:1100px;
+      --safe-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+    }
+
+    /* Reset + base */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(180deg,var(--bg), #bd3434);
+      color:var(--accent);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.35;
+      display:flex;
+      justify-content:center;
+    }
+
+    /* Page wrapper keeps content centered and prevents overlap with fixed bar */
+    .page{
+      width:100%;
+      max-width:var(--max-content);
+      padding: clamp(18px, 3.5vw, 40px);
+      padding-bottom: calc(var(--safe-bottom) + 120px); /* ensures content never covered by bottom island */
+    }
+
+    /* Header / logo */
+    .site-header{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+    }
+
+    .logo{
+      width:clamp(160px, 28vw, 420px);
+      height:auto;
+      display:block;
+      border-radius:8px;
+      object-fit:contain;
+      filter: drop-shadow(0 6px 18px rgba(0,0,0,0.25));
+    }
+
+    h1{
+      margin:12px 0 0;
+      font-size: clamp(20px, 4.2vw, 36px);
+      font-weight:700;
+      text-align:center;
+      letter-spacing:0.2px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    h1 u{
+      text-decoration: underline;
+      text-decoration-thickness:2px;
+      text-decoration-color: rgba(255,255,255,0.35);
+    }
+
+    /* Improved hr */
+    .fancy-hr{
+      width:100%;
+      max-width:900px;
+      height:1px;
+      margin:18px auto;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+      border:none;
+      border-radius:1px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+
+    /* Example main content placeholder */
+    .main{
+      max-width:980px;
+      margin:0 auto;
+      text-align:center;
+      font-size:clamp(14px, 2.6vw, 18px);
+    }
+
+    /* Button island (fixed, responsive and larger) */
+    .button-island {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: var(--safe-bottom);
+      z-index: 1100;
+      display:flex;
+      gap:12px;
+      padding: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.06));
+      backdrop-filter: blur(10px) saturate(1.05);
+      -webkit-backdrop-filter: blur(10px) saturate(1.05);
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      width: min(calc(100% - 32px), 760px);
+      justify-content: space-between;
+      align-items:center;
+      transition: transform 160ms ease;
+    }
+
+    /* Individual buttons */
+    .button-island button{
+      all:unset;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding: clamp(12px, 2.8vw, 18px) clamp(16px, 4.2vw, 26px);
+      background: var(--glass);
+      color:var(--accent);
+      font-weight:600;
+      font-size: clamp(15px, 2.6vw, 18px);
+      border-radius:999px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.02);
+      transition: transform 140ms ease, background 140ms ease, box-shadow 140ms ease;
+      flex:1;
+      text-align:center;
+      min-width: 72px;
+    }
+
+    .button-island button:hover,
+    .button-island button:focus{
+      transform: translateY(-4px);
+      background: var(--glass-strong);
+      outline: none;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    }
+
+    .button-island button:active{
+      transform: translateY(-1px) scale(0.995);
+    }
+
+    /* Make labels visually clearer on small widths by allowing wrapping */
+    .button-island button span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    /* Accessibility: keyboard focus */
+    .button-island button:focus-visible{
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.12), 0 8px 24px rgba(0,0,0,0.2);
+    }
+
+    /* Ensure plenty of bottom margin for readers on very small screens */
+    @media (max-width:420px){
+      .button-island{gap:8px;padding:10px;width:calc(100% - 20px)}
+      .button-island button{font-size:15px;padding:10px 12px}
     }
   </style>
-  <center><img src="logo.png" width="365" height="90" alt="MASONNET logo"></center>
-  <center><b><h1>Welcome to MASONNET Web <u>3.0</u>!</h1></b></center>
-  <hr>
-  <!-- Button Island Container -->
-<div class="button-island">
-  <button>Home</button>
-  <button>Games</button>
-  <button>Projects</button>
-  <button>More</button>
-</div>
+</head>
+<body>
+  <div class="page">
+    <header class="site-header" role="banner">
+      <img src="logo.png" alt="MASONNET logo" class="logo" />
+      <h1><strong>Welcome to MASONNET Web <u>3.0</u>!</strong></h1>
+    </header>
 
-<style>
-.button-island {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  padding: 16px 24px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(14px);
-  border-radius: 999px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-  z-index: 1000;
-  width: calc(100% - 40px);
-  max-width: 600px;
-}
+    <hr class="fancy-hr" />
 
-.button-island button {
-  all: unset;
-  font-family: system-ui, sans-serif;
-  font-size: 18px;
-  padding: 14px 22px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.25);
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.2s ease;
-  flex: 1;
-  text-align: center;
-}
+    <main class="main" role="main">
+      <p>Clean, modular sections for your prefab demos and viewer components. Replace this paragraph with your actual content. The layout prevents the bottom button island from covering content.</p>
 
-.button-island button:hover {
-  background: rgba(255, 255, 255, 0.4);
-}
-</style>
+      <!-- Example content to demonstrate scrolling -->
+      <div style="height:900px;margin-top:20px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:8px;padding:18px;">
+        <p style="opacity:0.9">Long form content placeholder — scroll to see the fixed island remain visible and content stay readable above it.</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Button Island Container (fixed) -->
+  <div class="button-island" role="navigation" aria-label="Primary navigation">
+    <button type="button" aria-label="Home"><span>Home</span></button>
+    <button type="button" aria-label="Games"><span>Games</span></button>
+    <button type="button" aria-label="Projects"><span>Projects</span></button>
+    <button type="button" aria-label="More"><span>More</span></button>
+  </div>
+</body>
 </html>
