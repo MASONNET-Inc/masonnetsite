@@ -4,254 +4,94 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>MASONNET Web 3.0</title>
-  <meta name="description" content="MASONNET Web 3.0" />
+  <meta name="description" content="MASONNET" />
   <style>
     :root{
       --bg:#ff0000;
-      --fg:#ffffff;
-      --muted:rgba(255,255,255,0.9);
-      --card:rgba(255,255,255,0.03);
-      --glass:rgba(255,255,255,0.04);
+      --fg:#fff;
+      --glass:rgba(255,255,255,0.03);
       --panel:#121212;
       --safe-bottom:calc(env(safe-area-inset-bottom,0px) + 16px);
       --island-max:980px;
       --focus:rgba(255,255,255,0.12);
-      --shadow:0 8px 30px rgba(0,0,0,0.35);
+      --shadow:0 10px 30px rgba(0,0,0,0.35);
       --gap:12px;
     }
-
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--fg)}
-    .page-wrapper{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:36px 18px}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif;-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--fg)}
+    .page-wrapper{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:36px 18px}
 
-    /* Top header: logo centered, then title centered (separate) */
-    .top {
-      width:100%;
-      max-width:1200px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:6px;
-      text-align:center;
+    /* Logo and site title separate, centered */
+    .top{width:100%;max-width:1200px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+    .logo{width:clamp(120px,18vw,320px);height:auto;display:block}
+    .site-title{margin:0;font-size:clamp(20px,3.6vw,34px);font-weight:800}
+
+    /* Main container intentionally empty (no placeholders) */
+    .container{width:100%;max-width:1200px;margin-top:18px;border-radius:14px;padding:22px;background:linear-gradient(180deg,rgba(0,0,0,0.02),rgba(0,0,0,0.01));box-shadow:var(--shadow);min-height:60vh}
+    /* remove inner content; container is a blank canvas for your app */
+
+    /* Button island: center group centers all nav buttons; info icon sits on right */
+    .button-island{
+      position:fixed;left:50%;transform:translateX(-50%);bottom:var(--safe-bottom);
+      z-index:1200;display:flex;align-items:center;justify-content:space-between;
+      gap:var(--gap);width:min(calc(100% - 40px),var(--island-max));padding:10px;border-radius:14px;
+      background:var(--glass);box-shadow:0 10px 30px rgba(0,0,0,0.32);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.03)
     }
-    img.logo { width:clamp(120px,18vw,320px); height:auto; display:block; }
-    h1.site-title { margin:0; font-size: clamp(20px, 3.6vw, 34px); font-weight:800; letter-spacing:0.4px; color:#fff; }
+    .center-group{flex:1 1 auto;display:flex;align-items:center;justify-content:center;gap:8px}
+    .right-group{flex:0 0 auto;display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-left:12px}
 
-    .container {
-      width:100%;
-      max-width:1200px;
-      background:linear-gradient(180deg,rgba(0,0,0,0.04),rgba(0,0,0,0.01));
-      border-radius:14px;
-      padding:22px;
-      margin-top:18px;
-      box-shadow: var(--shadow);
-    }
+    .btn{all:unset;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 14px;border-radius:10px;cursor:pointer;color:var(--fg);min-height:44px;line-height:1;border:1px solid transparent;transition:transform .12s,box-shadow .12s}
+    .btn.primary{background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02));font-weight:700;border:1px solid rgba(255,255,255,0.06)}
+    .btn:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,0.28)}
+    .btn:focus{outline:3px solid var(--focus);outline-offset:3px;border-radius:10px}
 
-    .lead { margin:0 0 16px; color:var(--muted); text-align:center; }
+    .icon{width:22px;height:22px;display:inline-block;fill:currentColor;color:var(--fg);opacity:0.98}
+    .info-btn{width:48px;height:48px;display:inline-grid;place-items:center;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03)}
+    .info-btn:focus{outline:3px solid var(--focus);outline-offset:3px}
 
-    .grid{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start;margin-top:8px}
-    @media(max-width:980px){.grid{grid-template-columns:1fr}}
-
-    .card{background:var(--card);padding:16px;border-radius:12px;text-align:left;color:var(--muted)}
-    .card h3{margin:0 0 8px;color:#fff;font-size:16px}
-    .card p{margin:0 0 10px}
-
-    .table{width:100%;border-collapse:collapse}
-    .table th,.table td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--muted);font-size:14px}
-    .table th{color:#fff;font-weight:700;text-align:left}
-
-    /* Button island - centered content except info icon (placed to right) */
-    .button-island {
-      position:fixed;
-      left:50%;
-      transform:translateX(-50%);
-      bottom:var(--safe-bottom);
-      z-index:1200;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:var(--gap);
-      width:min(calc(100% - 40px),var(--island-max));
-      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:14px;
-      padding:10px;
-      box-shadow:0 10px 30px rgba(0,0,0,0.32);
-      backdrop-filter: blur(6px);
-      border: 1px solid rgba(255,255,255,0.03);
-    }
-
-    /* Center group container */
-    .center-group {
-      flex: 1 1 auto;
-      display:flex;
-      align-items:center;
-      justify-content:center; /* center all buttons */
-      gap:8px;
-    }
-
-    .right-group {
-      flex: 0 0 auto;
-      display:flex;
-      align-items:center;
-      justify-content:flex-end;
-      gap:8px;
-      margin-left:12px;
-    }
-
-    .btn {
-      all:unset;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      padding:10px 14px;
-      border-radius:10px;
-      cursor:pointer;
-      color:var(--fg);
-      background:transparent;
-      min-height:44px;
-      line-height:1;
-      box-shadow:none;
-      border: 1px solid transparent;
-      transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease, border-color .12s ease;
-    }
-    .btn:focus { outline: 3px solid var(--focus); outline-offset:3px; border-radius:10px; }
-    .btn.primary {
-      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-      padding:10px 16px;
-      font-weight:700;
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-    .btn.ghost {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-    .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.28); }
-    .btn:active { transform: translateY(-1px); }
-
-    .icon { width:22px; height:22px; display:inline-block; fill:currentColor; color:#fff; opacity:0.98; }
-
-    .info-btn { width:48px; height:48px; display:inline-grid; place-items:center; border-radius:10px; background:transparent; border:1px solid rgba(255,255,255,0.03); }
-    .info-btn:focus { outline:3px solid var(--focus); outline-offset:3px; }
-
-    /* Tooltips simple */
-    [data-tooltip]{position:relative}
-    [data-tooltip]:hover::after,[data-tooltip]:focus::after{
-      content:attr(data-tooltip); position:absolute; left:50%; transform:translateX(-50%); bottom:calc(100% + 10px);
-      background:#0b0b0b; color:#fff; padding:6px 8px; border-radius:8px; font-size:13px; white-space:nowrap; z-index:1300; box-shadow:0 8px 24px rgba(0,0,0,0.45);
-    }
-    [data-tooltip]:hover::before,[data-tooltip]:focus::before{
-      content:""; position:absolute; left:50%; transform:translateX(-50%) rotate(45deg); bottom:calc(100% + 2px); width:10px; height:10px; background:#0b0b0b; z-index:1300;
-    }
-
-    footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
-
-    @media (max-width:520px){
-      .button-island{width:calc(100% - 26px); padding:8px}
-      .btn{padding:8px 10px; gap:6px}
+    /* small screens */
+    @media(max-width:520px){
+      .button-island{width:calc(100% - 26px);padding:8px}
+      .btn{padding:8px 10px}
       .icon{width:18px;height:18px}
+      .container{min-height:40vh}
     }
   </style>
 </head>
 <body>
   <div class="page-wrapper">
-    <!-- Top: logo (centered) then title (centered) -->
+    <!-- logo (centered) -->
     <div class="top" role="banner" aria-label="MASONNET header">
       <img src="logo.png" alt="MASONNET logo" class="logo" />
       <h1 class="site-title">Welcome to MASONNET Web 3.0</h1>
     </div>
 
-    <!-- Main container -->
-    <div class="container" role="main" aria-labelledby="overviewTitle">
-      <p class="lead">Production-ready layout. Replace with your application content.</p>
-
-      <div class="grid" aria-live="polite">
-        <main>
-          <section class="card" aria-labelledby="overviewTitle">
-            <h3 id="overviewTitle">Overview</h3>
-            <p>Core UI, navigation and components are integrated below. Integrate your real app modules where appropriate.</p>
-          </section>
-
-          <section class="card" style="margin-top:16px" aria-labelledby="playTitle">
-            <h3 id="playTitle">Main Module</h3>
-            <p>Insert your primary application content in this section.</p>
-
-            <div style="margin-top:16px;overflow:auto">
-              <table class="table" role="table" aria-label="Data table">
-                <thead>
-                  <tr><th>Name</th><th>Status</th><th>Updated</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>Project Alpha</td><td>WIP</td><td>2 days ago</td></tr>
-                  <tr><td>Component Library</td><td>Stable</td><td>1 week ago</td></tr>
-                  <tr><td>Deployment Pipeline</td><td>Testing</td><td>3 hours ago</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          <section class="card" style="margin-top:16px" aria-labelledby="docsTitle">
-            <h3 id="docsTitle">Documentation</h3>
-            <p>Link your documentation and operational instructions here.</p>
-          </section>
-        </main>
-
-        <aside>
-          <div class="card">
-            <h3 style="color:#fff">Quick Links</h3>
-            <ul style="margin:8px 0 0 18px;color:var(--muted)">
-              <li><a href="#" aria-label="Repo">Repo</a></li>
-              <li><a href="#" aria-label="Netlify Dashboard">Netlify Dashboard</a></li>
-              <li><a href="#" aria-label="Design Tokens">Design Tokens</a></li>
-            </ul>
-          </div>
-
-          <div class="card" style="margin-top:12px">
-            <h3 style="color:#fff">Metrics</h3>
-            <div style="display:flex;flex-direction:column;gap:8px">
-              <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>Uptime</span><strong style="color:#fff">99.99%</strong></div>
-              <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>Requests</span><strong style="color:#fff">—</strong></div>
-              <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>Views</span><strong id="viewsLabel">—</strong></div>
-            </div>
-          </div>
-
-          <div class="card" style="margin-top:12px">
-            <h3 style="color:#fff">Contact</h3>
-            <p style="color:var(--muted)">Email <a href="mailto:masonnet@masonnet.org">masonnet@masonnet.org</a></p>
-          </div>
-        </aside>
-      </div>
-
-      <footer><div style="max-width:980px;margin:14px auto 0;color:var(--muted);font-size:13px;text-align:center">© Mason Murphy — MASONNET</div></footer>
-    </div>
+    <!-- blank container: YOUR APPLICATION CONTENT SHOULD BE INSERTED HERE -->
+    <div class="container" id="appRoot" role="main" aria-label="Application root"></div>
   </div>
 
-  <!-- Fixed button bar: center-group centers all nav buttons, info icon sits in right-group -->
+  <!-- button bar: centered actions in center-group; info icon alone on right-group -->
   <nav class="button-island" role="navigation" aria-label="Primary navigation">
     <div class="center-group" role="group" aria-label="Primary actions">
-      <button id="btnHome" class="btn primary" data-tooltip="Home" aria-label="Home">
+      <button id="btnHome" class="btn primary" aria-label="Home" title="Home">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z" fill="currentColor"/></svg>
-        <span style="font-size:13px">Home</span>
       </button>
 
-      <button id="btnGames" class="btn" data-tooltip="Games" aria-label="Games">
+      <button id="btnGames" class="btn" aria-label="Games" title="Games">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10a4 4 0 0 0-4 4v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1a4 4 0 0 0-4-4H6z" fill="currentColor"/></svg>
-        <span style="font-size:13px">Games</span>
       </button>
 
-      <button id="btnProjects" class="btn" data-tooltip="Projects" aria-label="Projects">
+      <button id="btnProjects" class="btn" aria-label="Projects" title="Projects">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" fill="currentColor"/></svg>
-        <span style="font-size:13px">Projects</span>
       </button>
 
-      <button id="btnMore" class="btn" data-tooltip="More" aria-label="More">
+      <button id="btnMore" class="btn" aria-label="More" title="More">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="12" r="1.95" fill="currentColor"/><circle cx="12" cy="12" r="1.95" fill="currentColor"/><circle cx="18.5" cy="12" r="1.95" fill="currentColor"/></svg>
-        <span style="font-size:13px">More</span>
       </button>
     </div>
 
     <div class="right-group" role="group" aria-label="Secondary actions">
-      <button id="infoBtn" class="info-btn" data-tooltip="Info" aria-label="Info" title="Info">
+      <button id="infoBtn" class="info-btn" aria-label="Info" title="Info">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.3" fill="none" stroke="currentColor" stroke-width="1.15"/><circle cx="12" cy="8.3" r="1.05" fill="currentColor"/><rect x="11.05" y="10.6" width="1.9" height="5.0" rx="0.55" fill="currentColor"/></svg>
       </button>
     </div>
@@ -259,56 +99,15 @@
 
   <script>
     (function(){
+      // basic wiring only; no placeholders
       const infoBtn = document.getElementById('infoBtn');
-      const infoPanel = document.getElementById('infoPanel');
-      const btnHome = document.getElementById('btnHome');
-      const btnGames = document.getElementById('btnGames');
-      const btnProjects = document.getElementById('btnProjects');
-      const btnMore = document.getElementById('btnMore');
+      infoBtn.addEventListener('click', ()=> {
+        // noop by default — implement your behavior
+        alert('Info');
+      });
 
-      // Info panel toggle (a11y)
-      let lastFocus = null;
-      function toggleInfo(force){
-        const show = typeof force === 'boolean' ? force : infoPanel && !infoPanel.classList.contains('visible');
-        if (show){
-          lastFocus = document.activeElement;
-          if (infoPanel){ infoPanel.style.display = 'block'; infoPanel.classList.add('visible'); infoPanel.setAttribute('aria-hidden','false'); }
-          infoBtn.setAttribute('aria-expanded','true');
-          try{ infoPanel && infoPanel.focus({preventScroll:true}); }catch(e){}
-        } else {
-          if (infoPanel){ infoPanel.style.display = 'none'; infoPanel.classList.remove('visible'); infoPanel.setAttribute('aria-hidden','true'); }
-          infoBtn.setAttribute('aria-expanded','false');
-          try{ if (lastFocus) lastFocus.focus(); }catch(e){}
-        }
-      }
-      infoBtn.addEventListener('click', ()=> toggleInfo());
-      infoBtn.addEventListener('keydown', (e)=> { if (e.key==='Enter' || e.key===' ') { e.preventDefault(); toggleInfo(); } });
-      document.addEventListener('click', (e)=> {
-        if (!infoPanel || !infoPanel.classList.contains('visible')) return;
-        if (infoPanel.contains(e.target) || infoBtn.contains(e.target)) return;
-        toggleInfo(false);
-      }, {capture:true});
-      document.addEventListener('keydown', (e)=> { if (e.key === 'Escape') toggleInfo(false); });
-
-      // Simple navigation: scroll to sections and pulse
-      function pulse(elem){
-        if(!elem) return;
-        const card = elem.closest('.card') || elem;
-        card.style.transition = 'box-shadow .22s, transform .18s';
-        card.style.boxShadow = '0 12px 40px rgba(0,0,0,0.45)';
-        card.style.transform = 'translateY(-4px)';
-        setTimeout(()=>{ card.style.boxShadow=''; card.style.transform=''; }, 420);
-      }
-      btnHome.addEventListener('click', ()=> { const el=document.querySelector('#overviewTitle'); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); pulse(el); }});
-      btnGames.addEventListener('click', ()=> { const el=document.querySelector('#playTitle'); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); pulse(el); }});
-      btnProjects.addEventListener('click', ()=> { const el=document.querySelector('#docsTitle'); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); pulse(el); }});
-      btnMore.addEventListener('click', ()=> toggleInfo(true));
-
-      // Views placeholder reset
-      (function viewCounter(){ const el=document.getElementById('viewsLabel'); if(el) el.textContent='—'; const el2=document.getElementById('viewsLabel2'); if(el2) el2.textContent='—'; })();
-
-      // Accessibility: ensure buttons keyboard-accessible
-      (function a11y(){ document.querySelectorAll('.btn, .info-btn').forEach(b => { if(!b.hasAttribute('tabindex')) b.setAttribute('tabindex','0'); }); })();
+      // expose app root for your scripts
+      window.appRoot = document.getElementById('appRoot');
     })();
   </script>
 </body>
