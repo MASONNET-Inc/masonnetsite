@@ -1,0 +1,10 @@
+name: Archive site hourly
+on:
+  schedule:
+    - cron: '0 * * * *'  # every hour
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Archive site
+        run: curl https://web.archive.org/save/https://masonnet.org
