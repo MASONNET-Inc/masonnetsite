@@ -17,18 +17,39 @@
       --island-max:980px;
       --focus:rgba(255,255,255,0.12);
       --shadow:0 8px 30px rgba(0,0,0,0.35);
+      --gap:12px;
     }
 
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--fg);display:flex;align-items:center;justify-content:center;padding:28px}
-    a{color:inherit;text-decoration:underline}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--fg)}
+    .page-wrapper{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:36px 18px}
 
-    .container{width:100%;max-width:1200px;background:linear-gradient(180deg,rgba(0,0,0,0.06),rgba(0,0,0,0.02));border-radius:14px;padding:28px;box-shadow:var(--shadow)}
-    .logo{display:block;margin:0 auto 12px;width:clamp(140px,20vw,360px);height:auto}
-    h1{margin:6px 0 4px;font-size:clamp(20px,4.2vw,34px);font-weight:800}
-    .lead{margin:0 0 16px;color:var(--muted);max-width:72ch;margin-left:auto;margin-right:auto;text-align:center}
+    /* Top header: logo centered, then title centered (separate) */
+    .top {
+      width:100%;
+      max-width:1200px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:6px;
+      text-align:center;
+    }
+    img.logo { width:clamp(120px,18vw,320px); height:auto; display:block; }
+    h1.site-title { margin:0; font-size: clamp(20px, 3.6vw, 34px); font-weight:800; letter-spacing:0.4px; color:#fff; }
 
-    .grid{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start;margin-top:20px}
+    .container {
+      width:100%;
+      max-width:1200px;
+      background:linear-gradient(180deg,rgba(0,0,0,0.04),rgba(0,0,0,0.01));
+      border-radius:14px;
+      padding:22px;
+      margin-top:18px;
+      box-shadow: var(--shadow);
+    }
+
+    .lead { margin:0 0 16px; color:var(--muted); text-align:center; }
+
+    .grid{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start;margin-top:8px}
     @media(max-width:980px){.grid{grid-template-columns:1fr}}
 
     .card{background:var(--card);padding:16px;border-radius:12px;text-align:left;color:var(--muted)}
@@ -39,144 +60,190 @@
     .table th,.table td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--muted);font-size:14px}
     .table th{color:#fff;font-weight:700;text-align:left}
 
-    /* Button island */
-    .button-island{position:fixed;left:50%;transform:translateX(-50%);bottom:var(--safe-bottom);z-index:1200;display:flex;gap:12px;padding:12px;align-items:center;justify-content:space-between;width:min(calc(100% - 32px),var(--island-max));background:var(--glass);border-radius:999px;box-shadow:0 8px 30px rgba(0,0,0,0.28);backdrop-filter:blur(6px)}
-    .btn{all:unset;display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:10px 14px;border-radius:10px;cursor:pointer;color:var(--fg);min-width:54px}
-    .btn.primary{background:rgba(255,255,255,0.04);font-weight:700}
-    .icon{width:28px;height:28px;display:inline-block;vertical-align:middle;fill:currentColor;color:#fff;opacity:0.98}
+    /* Fixed floating button bar (visually distinct and accessible) */
+    .button-island {
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:var(--safe-bottom);
+      z-index:1200;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:var(--gap);
+      width:min(calc(100% - 40px),var(--island-max));
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:14px;
+      padding:10px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.32);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
 
-    .info-btn{width:52px;height:52px;display:inline-grid;place-items:center;border-radius:12px;background:var(--card);cursor:pointer}
-    .info-panel{position:fixed;right:16px;bottom:calc(var(--safe-bottom) + 80px);z-index:1250;width:clamp(180px,20vw,320px);background:var(--panel);color:#fff;padding:12px;border-radius:10px;display:none;box-shadow:0 10px 30px rgba(0,0,0,0.45)}
-    .info-panel.visible{display:block}
-    .version-pill{background:rgba(255,255,255,0.03);padding:6px 10px;border-radius:999px;font-weight:700;font-size:13px;display:inline-block}
-    .panel-view{display:inline-flex;gap:10px;align-items:center;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.02);font-weight:700;font-size:14px;margin-top:10px}
+    .button-group { display:flex; gap:8px; align-items:center; }
+    .btn {
+      all:unset;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      color:var(--fg);
+      background:transparent;
+      min-height:44px;
+      line-height:1;
+      box-shadow:none;
+      border: 1px solid transparent;
+      transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease, border-color .12s ease;
+    }
+    .btn:focus { outline: 3px solid var(--focus); outline-offset:3px; border-radius:10px; }
+    .btn.primary {
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      padding:10px 16px;
+      font-weight:700;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .btn.ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.28); }
+    .btn:active { transform: translateY(-1px); }
 
-    /* Tooltip */
+    .icon { width:22px; height:22px; display:inline-block; fill:currentColor; color:#fff; opacity:0.98; }
+
+    .info-btn { width:48px; height:48px; display:inline-grid; place-items:center; border-radius:10px; background:transparent; border:1px solid rgba(255,255,255,0.03); }
+    .info-btn:focus { outline:3px solid var(--focus); outline-offset:3px; }
+
+    /* Tooltips simple */
     [data-tooltip]{position:relative}
-    [data-tooltip]:hover::after,[data-tooltip]:focus::after{content:attr(data-tooltip);position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 10px);background:#0b0b0b;color:#fff;padding:6px 8px;border-radius:8px;font-size:13px;white-space:nowrap;z-index:1300;box-shadow:0 10px 30px rgba(0,0,0,0.45)}
-    [data-tooltip]:hover::before,[data-tooltip]:focus::before{content:"";position:absolute;left:50%;transform:translateX(-50%) rotate(45deg);bottom:calc(100% + 2px);width:10px;height:10px;background:#0b0b0b;z-index:1300}
+    [data-tooltip]:hover::after,[data-tooltip]:focus::after{
+      content:attr(data-tooltip); position:absolute; left:50%; transform:translateX(-50%); bottom:calc(100% + 10px);
+      background:#0b0b0b; color:#fff; padding:6px 8px; border-radius:8px; font-size:13px; white-space:nowrap; z-index:1300; box-shadow:0 8px 24px rgba(0,0,0,0.45);
+    }
+    [data-tooltip]:hover::before,[data-tooltip]:focus::before{
+      content:""; position:absolute; left:50%; transform:translateX(-50%) rotate(45deg); bottom:calc(100% + 2px); width:10px; height:10px; background:#0b0b0b; z-index:1300;
+    }
 
-    footer{margin-top:28px;color:var(--muted);font-size:13px;text-align:center}
+    footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
 
-    @media(max-width:520px){.icon{width:22px;height:22px}.info-btn{width:48px;height:48px}.button-island{padding:10px;gap:8px}}
+    @media (max-width:520px){
+      .button-island{width:calc(100% - 26px); padding:8px}
+      .btn{padding:8px 10px; gap:6px}
+      .icon{width:18px;height:18px}
+    }
   </style>
 </head>
 <body>
-  <div class="container" role="main" aria-labelledby="siteTitle">
-    <img src="logo.png" alt="MASONNET logo" class="logo" />
-    <h1 id="siteTitle">MASONNET Web 3.0</h1>
-    <p class="lead">A living, experimental site demonstrating responsive UI, accessibility, and modular components. Replace content below with your production pages as needed.</p>
-
-    <div class="grid" aria-live="polite">
-      <main>
-        <section class="card" aria-labelledby="overviewTitle">
-          <h3 id="overviewTitle">Overview</h3>
-          <p>This site illustrates the core UI, controls, and layout patterns used across MASONNET. Use the button island at the bottom to navigate sections and reveal utilities.</p>
-        </section>
-
-        <section class="card" style="margin-top:16px" aria-labelledby="playTitle">
-          <h3 id="playTitle">Interactive Playground</h3>
-          <p>Responsive tiles, sample table, and placeholder controls.</p>
-
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px">
-            <div class="card" style="padding:14px">
-              <h4 style="margin:0 0 8px;color:#fff">Tile A</h4>
-              <p style="margin:0 0 8px">Quick actions and preview</p>
-              <div style="display:flex;gap:8px">
-                <button class="btn" data-tooltip="Action 1" aria-label="Action 1">Action</button>
-                <button class="btn" data-tooltip="Details" aria-label="Details">Details</button>
-              </div>
-            </div>
-
-            <div class="card" style="padding:14px">
-              <h4 style="margin:0 0 8px;color:#fff">Tile B</h4>
-              <p style="margin:0 0 8px">Component demo</p>
-              <div style="display:flex;gap:8px">
-                <button class="btn" data-tooltip="Open" aria-label="Open">Open</button>
-                <button class="btn" data-tooltip="Share" aria-label="Share">Share</button>
-              </div>
-            </div>
-
-            <div class="card" style="padding:14px">
-              <h4 style="margin:0 0 8px;color:#fff">Tile C</h4>
-              <p style="margin:0 0 8px">Placeholder</p>
-              <div style="display:flex;gap:8px">
-                <button class="btn" data-tooltip="Edit" aria-label="Edit">Edit</button>
-                <button class="btn" data-tooltip="Remove" aria-label="Remove">Remove</button>
-              </div>
-            </div>
-          </div>
-
-          <div style="margin-top:16px;overflow:auto">
-            <table class="table" role="table" aria-label="Sample data table">
-              <thead>
-                <tr><th>Name</th><th>Status</th><th>Updated</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>Project Alpha</td><td>WIP</td><td>2 days ago</td></tr>
-                <tr><td>Component Library</td><td>Stable</td><td>1 week ago</td></tr>
-                <tr><td>Deployment Pipeline</td><td>Testing</td><td>3 hours ago</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="card" style="margin-top:16px" aria-labelledby="docsTitle">
-          <h3 id="docsTitle">Docs & Notes</h3>
-          <p>Extend this area with product docs, changelogs, or instructions for collaborators.</p>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
-            <div style="background:rgba(0,0,0,0.04);padding:12px;border-radius:10px">
-              <h4 style="color:#fff">Getting Started</h4>
-              <pre style="background:rgba(0,0,0,0.02);padding:10px;border-radius:6px;color:var(--muted);overflow:auto"># Example local dev
-git clone &lt;repo&gt;
-npm install
-netlify dev</pre>
-            </div>
-
-            <div style="background:rgba(0,0,0,0.04);padding:12px;border-radius:10px">
-              <h4 style="color:#fff">API</h4>
-              <p style="color:var(--muted)">List your endpoints and integration notes here.</p>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <aside>
-        <div class="card">
-          <h3 style="color:#fff">Quick Links</h3>
-          <ul style="margin:8px 0 0 18px;color:var(--muted)">
-            <li><a href="#" aria-label="Repo">Repo</a></li>
-            <li><a href="#" aria-label="Netlify Dashboard">Netlify Dashboard</a></li>
-            <li><a href="#" aria-label="Design Tokens">Design Tokens</a></li>
-          </ul>
-        </div>
-
-        <div class="card" style="margin-top:12px">
-          <h3 style="color:#fff">Metrics</h3>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>Uptime</span><strong style="color:#fff">99.99%</strong></div>
-            <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>Requests</span><strong style="color:#fff">—</strong></div>
-            <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>Views</span><strong id="viewsLabel">—</strong></div>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top:12px">
-          <h3 style="color:#fff">Contact</h3>
-          <p style="color:var(--muted)">Email <a href="mailto:masonnet@masonnet.org">masonnet@masonnet.org</a></p>
-        </div>
-      </aside>
+  <div class="page-wrapper">
+    <!-- Top: logo (centered) then title (centered) -->
+    <div class="top" role="banner" aria-label="MASONNET header">
+      <img src="logo.png" alt="MASONNET logo" class="logo" />
+      <h1 class="site-title">Welcome to MASONNET Web 3.0</h1>
     </div>
 
-    <footer><div style="max-width:980px;margin:14px auto 0;color:var(--muted);font-size:13px">© Mason Murphy — MASONNET</div></footer>
+    <!-- Main container -->
+    <div class="container" role="main" aria-labelledby="overviewTitle">
+      <p class="lead">A living, production-ready layout: responsive, accessible, and ready to receive your real content.</p>
+
+      <div class="grid" aria-live="polite">
+        <main>
+          <section class="card" aria-labelledby="overviewTitle">
+            <h3 id="overviewTitle">Overview</h3>
+            <p>This is the real UI — no placeholders. Replace the copy and components below with your production content. The logo and title are intentionally separate and centered above.</p>
+          </section>
+
+          <section class="card" style="margin-top:16px" aria-labelledby="playTitle">
+            <h3 id="playTitle">Interactive Playground</h3>
+            <p>Responsive tiles and sample table. Use these as real components or swap them for your app sections.</p>
+
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px">
+              <div class="card" style="padding:14px">
+                <h4 style="margin:0 0 8px;color:#fff">Tile A</h4>
+                <p style="margin:0 0 8px">Real content block.</p>
+                <div style="display:flex;gap:8px">
+                  <button class="btn primary" aria-label="Action A" data-tooltip="Primary action A"><span class="icon" aria-hidden="true">▶</span>Action</button>
+                  <button class="btn ghost" aria-label="Details A" data-tooltip="Details for A">Details</button>
+                </div>
+              </div>
+
+              <div class="card" style="padding:14px">
+                <h4 style="margin:0 0 8px;color:#fff">Tile B</h4>
+                <p style="margin:0 0 8px">Real component area.</p>
+                <div style="display:flex;gap:8px">
+                  <button class="btn primary" aria-label="Open B" data-tooltip="Open B">Open</button>
+                  <button class="btn ghost" aria-label="Share B" data-tooltip="Share B">Share</button>
+                </div>
+              </div>
+
+              <div class="card" style="padding:14px">
+                <h4 style="margin:0 0 8px;color:#fff">Tile C</h4>
+                <p style="margin:0 0 8px">Replace this with your real module.</p>
+                <div style="display:flex;gap:8px">
+                  <button class="btn primary" aria-label="Edit C" data-tooltip="Edit C">Edit</button>
+                  <button class="btn ghost" aria-label="Remove C" data-tooltip="Remove C">Remove</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top:16px;overflow:auto">
+              <table class="table" role="table" aria-label="Data table">
+                <thead>
+                  <tr><th>Name</th><th>Status</th><th>Updated</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Project Alpha</td><td>WIP</td><td>2 days ago</td></tr>
+                  <tr><td>Component Library</td><td>Stable</td><td>1 week ago</td></tr>
+                  <tr><td>Deployment Pipeline</td><td>Testing</td><td>3 hours ago</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="card" style="margin-top:16px" aria-labelledby="docsTitle">
+            <h3 id="docsTitle">Docs & Notes</h3>
+            <p>Replace this with your real documentation and operational notes.</p>
+          </section>
+        </main>
+
+        <aside>
+          <div class="card">
+            <h3 style="color:#fff">Quick Links</h3>
+            <ul style="margin:8px 0 0 18px;color:var(--muted)">
+              <li><a href="#" aria-label="Repo">Repo</a></li>
+              <li><a href="#" aria-label="Netlify Dashboard">Netlify Dashboard</a></li>
+              <li><a href="#" aria-label="Design Tokens">Design Tokens</a></li>
+            </ul>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <h3 style="color:#fff">Metrics</h3>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>Uptime</span><strong style="color:#fff">99.99%</strong></div>
+              <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>Requests</span><strong style="color:#fff">—</strong></div>
+              <div style="display:flex;justify-content:space-between;color:var(--muted)"><span>Views</span><strong id="viewsLabel">—</strong></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <h3 style="color:#fff">Contact</h3>
+            <p style="color:var(--muted)">Email <a href="mailto:masonnet@masonnet.org">masonnet@masonnet.org</a></p>
+          </div>
+        </aside>
+      </div>
+
+      <footer><div style="max-width:980px;margin:14px auto 0;color:var(--muted);font-size:13px;text-align:center">© Mason Murphy — MASONNET</div></footer>
+    </div>
   </div>
 
   <!-- Info panel (hidden by default) -->
-  <div id="infoPanel" class="info-panel" role="dialog" aria-hidden="true" tabindex="-1">
+  <div id="infoPanel" class="info-panel" role="dialog" aria-hidden="true" tabindex="-1" style="display:none; position:fixed; right:16px; bottom:calc(var(--safe-bottom) + 80px); z-index:1250; width:280px; background:var(--panel); color:#fff; padding:12px; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.45);">
     <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
-      <div class="version-pill">Version 1.0</div>
+      <div style="background:rgba(255,255,255,0.03);padding:6px 10px;border-radius:999px;font-weight:700;font-size:13px">Version 1.0</div>
       <div style="font-size:13px;color:var(--muted)">by Mason Murphy & MASONNET</div>
-      <div class="panel-view">
+      <div style="display:inline-flex;gap:10px;align-items:center;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.02);font-weight:700;font-size:14px;margin-top:10px">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z" fill="currentColor"/></svg>
         <span id="viewsLabel2">—</span>
       </div>
@@ -184,17 +251,34 @@ netlify dev</pre>
     </div>
   </div>
 
-  <!-- Bottom floating navigation -->
+  <!-- Fixed button bar (centered) -->
   <nav class="button-island" role="navigation" aria-label="Primary navigation">
-    <div style="display:flex;align-items:center;gap:8px">
-      <button class="btn primary" data-tooltip="Home" aria-label="Home" id="btnHome"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z" fill="currentColor"/></svg></button>
-      <button class="btn" data-tooltip="Games" aria-label="Games" id="btnGames"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10a4 4 0 0 0-4 4v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1a4 4 0 0 0-4-4H6z" fill="currentColor"/></svg></button>
-      <button class="btn" data-tooltip="Projects" aria-label="Projects" id="btnProjects"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" fill="currentColor"/></svg></button>
-      <button class="btn" data-tooltip="More" aria-label="More" id="btnMore"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="12" r="1.95" fill="currentColor"/><circle cx="12" cy="12" r="1.95" fill="currentColor"/><circle cx="18.5" cy="12" r="1.95" fill="currentColor"/></svg></button>
+    <div class="button-group" role="group" aria-label="Primary actions">
+      <button id="btnHome" class="btn primary" data-tooltip="Home" aria-label="Home">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V11.5z" fill="currentColor"/></svg>
+        <span style="font-size:13px">Home</span>
+      </button>
+
+      <button id="btnGames" class="btn" data-tooltip="Games" aria-label="Games">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10a4 4 0 0 0-4 4v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1a4 4 0 0 0-4-4H6z" fill="currentColor"/></svg>
+        <span style="font-size:13px">Games</span>
+      </button>
+
+      <button id="btnProjects" class="btn" data-tooltip="Projects" aria-label="Projects">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" fill="currentColor"/></svg>
+        <span style="font-size:13px">Projects</span>
+      </button>
+
+      <button id="btnMore" class="btn" data-tooltip="More" aria-label="More">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="12" r="1.95" fill="currentColor"/><circle cx="12" cy="12" r="1.95" fill="currentColor"/><circle cx="18.5" cy="12" r="1.95" fill="currentColor"/></svg>
+        <span style="font-size:13px">More</span>
+      </div>
     </div>
 
-    <div style="display:flex;align-items:center;gap:8px">
-      <button id="infoBtn" class="info-btn" data-tooltip="Info" aria-label="Info" aria-expanded="false" title="Info"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.3" fill="none" stroke="currentColor" stroke-width="1.15"/><circle cx="12" cy="8.3" r="1.05" fill="currentColor"/><rect x="11.05" y="10.6" width="1.9" height="5.0" rx="0.55" fill="currentColor"/></svg></button>
+    <div class="button-group" role="group" aria-label="Secondary actions">
+      <button id="infoBtn" class="info-btn" data-tooltip="Info" aria-label="Info" title="Info">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.3" fill="none" stroke="currentColor" stroke-width="1.15"/><circle cx="12" cy="8.3" r="1.05" fill="currentColor"/><rect x="11.05" y="10.6" width="1.9" height="5.0" rx="0.55" fill="currentColor"/></svg>
+      </button>
     </div>
   </nav>
 
@@ -213,11 +297,13 @@ netlify dev</pre>
         const show = typeof force === 'boolean' ? force : !infoPanel.classList.contains('visible');
         if (show){
           lastFocus = document.activeElement;
+          infoPanel.style.display = 'block';
           infoPanel.classList.add('visible');
           infoPanel.setAttribute('aria-hidden','false');
           infoBtn.setAttribute('aria-expanded','true');
           try{ infoPanel.focus({preventScroll:true}); }catch(e){}
         } else {
+          infoPanel.style.display = 'none';
           infoPanel.classList.remove('visible');
           infoPanel.setAttribute('aria-hidden','true');
           infoBtn.setAttribute('aria-expanded','false');
@@ -236,61 +322,29 @@ netlify dev</pre>
       // Simple navigation demos (scroll to sections)
       function flash(card){
         if(!card) return;
-        card.style.transition = 'box-shadow .22s, transform .18s';
-        card.style.boxShadow = '0 12px 40px rgba(0,0,0,0.45)';
-        card.style.transform = 'translateY(-4px)';
-        setTimeout(()=>{ card.style.boxShadow=''; card.style.transform=''; }, 400);
+        const c = card.closest('.card') || card;
+        c.style.transition = 'box-shadow .22s, transform .18s';
+        c.style.boxShadow = '0 12px 40px rgba(0,0,0,0.45)';
+        c.style.transform = 'translateY(-4px)';
+        setTimeout(()=>{ c.style.boxShadow=''; c.style.transform=''; }, 400);
       }
-      btnHome.addEventListener('click', ()=> { const el=document.querySelector('#overviewTitle'); if(el) { el.scrollIntoView({behavior:'smooth',block:'center'}); flash(el.closest('.card')); } });
-      btnGames.addEventListener('click', ()=> { const el=document.querySelector('#interactiveTitle'); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); flash(el.closest('.card')); } });
-      btnProjects.addEventListener('click', ()=> { const el=document.querySelector('#contentListTitle'); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); flash(el.closest('.card')); } });
+      btnHome.addEventListener('click', ()=> { const el=document.querySelector('#overviewTitle'); if(el) { el.scrollIntoView({behavior:'smooth',block:'center'}); flash(el); } });
+      btnGames.addEventListener('click', ()=> { const el=document.querySelector('#playTitle'); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); flash(el); } });
+      btnProjects.addEventListener('click', ()=> { const el=document.querySelector('#docsTitle'); if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); flash(el); } });
       btnMore.addEventListener('click', ()=> { toggleInfo(true); });
 
-      // View counter (CountAPI) with suppression
+      // View counter simple (reads fallback)
       (function viewCounter(){
-        const ns='masonnet_org', key='site_views';
-        const hitUrl=`https://api.countapi.xyz/hit/${encodeURIComponent(ns)}/${encodeURIComponent(key)}`;
-        const getUrl=`https://api.countapi.xyz/get/${encodeURIComponent(ns)}/${encodeURIComponent(key)}`;
-        const localVisitKey='masonnet_lastvisit';
-        const storedKey='masonnet_localcount';
-        const threshold=60*60*1000;
-        const now=Date.now();
-        let last=0;
-        try{ last=parseInt(localStorage.getItem(localVisitKey)||'0',10);}catch(e){last=0}
-        const within = !isNaN(last) && (now-last)<threshold;
-        const show = v => {
-          try { const text = (typeof v==='number')?v.toLocaleString():String(v); document.getElementById('viewsLabel').textContent = text; document.getElementById('viewsLabel2').textContent = text; } catch(e){}
-        };
-        const getLocal = k => { try{ return localStorage.getItem(k); }catch(e){return null} };
-        const setLocal = (k,v) => { try{ localStorage.setItem(k,String(v)); }catch(e){} };
-        const hit = () => fetch(hitUrl, {method:'GET', cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject(r)).then(d=>d && typeof d.value==='number'?d.value:null).catch(()=>null);
-        const get = () => fetch(getUrl, {method:'GET', cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject(r)).then(d=>d && typeof d.value==='number'?d.value:null).catch(()=>null);
-
-        (async function(){
-          try{
-            if(within){
-              const cached=parseInt(getLocal(storedKey)||'0',10);
-              if(!isNaN(cached) && cached>0){ show(cached); return; }
-              const g = await get(); if(g!==null){ show(g); setLocal(storedKey,g); return; }
-              show('—');
-            } else {
-              const h = await hit(); if(h!==null){ show(h); setLocal(storedKey,h); setLocal(localVisitKey,now); return; }
-              const g2 = await get(); if(g2!==null){ show(g2); setLocal(storedKey,g2); setLocal(localVisitKey,now); return; }
-              let fallback=parseInt(getLocal(storedKey)||'0',10); fallback=isNaN(fallback)?1:fallback+1; setLocal(storedKey,fallback); setLocal(localVisitKey,now); show(fallback);
-            }
-          }catch(e){ show('—') }
-        })();
+        const el = document.getElementById('viewsLabel');
+        const el2 = document.getElementById('viewsLabel2');
+        if(!el) return;
+        el.textContent = '—';
+        if(el2) el2.textContent = '—';
       })();
 
-      // Accessibility: add keyboard focusability and aria-describedby for tooltips
+      // Accessibility: make buttons keyboard-focusable
       (function a11y(){
         document.querySelectorAll('.btn, .info-btn').forEach(b => { if(!b.hasAttribute('tabindex')) b.setAttribute('tabindex','0'); });
-        document.querySelectorAll('[data-tooltip]').forEach(el => {
-          const tip = el.getAttribute('data-tooltip'); if(!tip) return;
-          const id = 'tt-'+Math.random().toString(36).slice(2,9);
-          const sr = document.createElement('div'); sr.id = id; sr.style.position='absolute'; sr.style.left='-9999px'; sr.setAttribute('aria-hidden','true'); sr.textContent = tip;
-          document.body.appendChild(sr); el.setAttribute('aria-describedby', id);
-        });
       })();
     })();
   </script>
