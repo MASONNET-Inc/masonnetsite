@@ -2,46 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>MASONNET Web 3.0</title>
   <style>
     :root{
-      --bg:#e84b4b;          /* background color */
-      --glass: rgba(255,255,255,0.12);
+      --bg-start:#e84b4b;
+      --bg-end:#bd3434;
+      --glass: rgba(255,255,255,0.10);
       --glass-strong: rgba(255,255,255,0.26);
       --accent:#ffffff;
+      --muted: rgba(255,255,255,0.85);
       --shadow: 0 6px 18px rgba(0,0,0,0.15);
       --max-content:1100px;
       --safe-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+      --island-max:760px;
     }
 
-    /* Reset + base */
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background: linear-gradient(180deg,var(--bg), #bd3434);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: linear-gradient(180deg,var(--bg-start),var(--bg-end));
       color:var(--accent);
       -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
       line-height:1.35;
       display:flex;
       justify-content:center;
     }
 
-    /* Page wrapper keeps content centered and prevents overlap with fixed bar */
+    /* Page container and spacing so fixed island never overlaps content */
     .page{
       width:100%;
       max-width:var(--max-content);
-      padding: clamp(18px, 3.5vw, 40px);
-      padding-bottom: calc(var(--safe-bottom) + 120px); /* ensures content never covered by bottom island */
+      padding: clamp(16px, 3.5vw, 36px);
+      padding-bottom: calc(var(--safe-bottom) + 150px);
     }
 
-    /* Header / logo */
     .site-header{
       display:flex;
-      gap:16px;
+      gap:12px;
       align-items:center;
       justify-content:center;
       flex-direction:column;
@@ -57,42 +57,73 @@
     }
 
     h1{
-      margin:12px 0 0;
+      margin:10px 0 0;
       font-size: clamp(20px, 4.2vw, 36px);
       font-weight:700;
       text-align:center;
-      letter-spacing:0.2px;
       background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
     }
+    h1 u{ text-decoration: underline; text-decoration-thickness:2px; text-decoration-color: rgba(255,255,255,0.35); }
 
-    h1 u{
-      text-decoration: underline;
-      text-decoration-thickness:2px;
-      text-decoration-color: rgba(255,255,255,0.35);
+    /* Centered meta block: version, authors, contact */
+    .meta {
+      margin:18px auto 6px;
+      text-align:center;
+      color:var(--muted);
+      font-size: clamp(13px, 2.4vw, 16px);
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      align-items:center;
     }
 
-    /* Improved hr */
+    .meta .version { font-weight:600; color: rgba(255,255,255,0.96); }
+    .meta .authors { opacity:0.95; font-weight:500; }
+    .meta .contact a { color:rgba(255,255,255,0.95); text-decoration:underline; }
+
     .fancy-hr{
       width:100%;
       max-width:900px;
       height:1px;
-      margin:18px auto;
-      background:
-        linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.18), rgba(255,255,255,0.06));
+      margin:12px auto;
+      background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.18), rgba(255,255,255,0.06));
       border:none;
       border-radius:1px;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
     }
 
-    /* Example main content placeholder */
     .main{
       max-width:980px;
       margin:0 auto;
       text-align:center;
       font-size:clamp(14px, 2.6vw, 18px);
+    }
+
+    /* View counter badge top-right of fixed island */
+    .view-counter {
+      position: fixed;
+      right: clamp(12px, 4vw, 22px);
+      bottom: calc(var(--safe-bottom) + 110px);
+      z-index:1200;
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+      color:var(--accent);
+      padding:8px 12px;
+      border-radius:999px;
+      font-weight:600;
+      font-size:14px;
+      box-shadow: var(--shadow);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      backdrop-filter: blur(8px) saturate(1.05);
+    }
+
+    .view-counter .eye {
+      width:18px;height:18px;display:inline-block;opacity:0.95;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.18));
     }
 
     /* Button island (fixed, responsive and larger) */
@@ -110,13 +141,12 @@
       -webkit-backdrop-filter: blur(10px) saturate(1.05);
       border-radius: 999px;
       box-shadow: var(--shadow);
-      width: min(calc(100% - 32px), 760px);
+      width: min(calc(100% - 32px), var(--island-max));
       justify-content: space-between;
       align-items:center;
       transition: transform 160ms ease;
     }
 
-    /* Individual buttons */
     .button-island button{
       all:unset;
       cursor:pointer;
@@ -124,17 +154,17 @@
       align-items:center;
       justify-content:center;
       gap:10px;
-      padding: clamp(12px, 2.8vw, 18px) clamp(16px, 4.2vw, 26px);
+      padding: clamp(12px, 2.8vw, 18px) clamp(12px, 3.8vw, 26px);
       background: var(--glass);
       color:var(--accent);
-      font-weight:600;
-      font-size: clamp(15px, 2.6vw, 18px);
+      font-weight:700;
+      font-size: clamp(14px, 2.6vw, 18px);
       border-radius:999px;
       box-shadow: 0 3px 8px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.02);
       transition: transform 140ms ease, background 140ms ease, box-shadow 140ms ease;
       flex:1;
       text-align:center;
-      min-width: 72px;
+      min-width: 64px;
     }
 
     .button-island button:hover,
@@ -145,50 +175,206 @@
       box-shadow: 0 8px 24px rgba(0,0,0,0.18);
     }
 
-    .button-island button:active{
-      transform: translateY(-1px) scale(0.995);
+    .button-island .info-btn{
+      flex:0 0 auto;
+      width:48px;
+      height:48px;
+      padding:0;
+      border-radius:12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
     }
 
-    /* Make labels visually clearer on small widths by allowing wrapping */
-    .button-island button span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .button-island .info-btn svg{width:20px;height:20px;opacity:0.98}
 
-    /* Accessibility: keyboard focus */
-    .button-island button:focus-visible{
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.12), 0 8px 24px rgba(0,0,0,0.2);
+    .info-panel{
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      bottom: calc(var(--safe-bottom) + 80px);
+      z-index: 1150;
+      width: min(92%, 520px);
+      background: linear-gradient(180deg, rgba(30,30,30,0.92), rgba(20,20,20,0.92));
+      color:#fff;
+      padding:14px;
+      border-radius:12px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+      display:none;
+      gap:8px;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      font-size:15px;
     }
 
-    /* Ensure plenty of bottom margin for readers on very small screens */
-    @media (max-width:420px){
-      .button-island{gap:8px;padding:10px;width:calc(100% - 20px)}
-      .button-island button{font-size:15px;padding:10px 12px}
+    .info-panel.visible{ display:flex; flex-direction:column; transform: translateX(-50%) translateY(0); }
+
+    .info-panel .row{ width:100%; display:flex; justify-content:center; gap:10px; align-items:center; flex-wrap:wrap }
+
+    .info-panel .version-tag{ font-weight:700; background:rgba(255,255,255,0.04); padding:6px 10px; border-radius:999px; }
+
+    .info-panel .authors{ opacity:0.92 }
+
+    .info-panel .contact-link{
+      display:inline-block;
+      margin-top:6px;
+      color:#fff;
+      text-decoration:underline;
+      font-weight:600;
+    }
+
+    /* Small screen tweaks */
+    @media (max-width:520px){
+      .view-counter{ right:12px; bottom: calc(var(--safe-bottom) + 150px); padding:6px 10px; font-size:13px }
+      .button-island{ gap:8px; padding:10px; width: calc(100% - 24px) }
+      .button-island .info-btn{ width:44px; height:44px }
+      .info-panel{ bottom: calc(var(--safe-bottom) + 72px); width: min(96%,420px) }
+    }
+
+    @media (hover:none){
+      .button-island button:hover{ transform:none; box-shadow: 0 6px 18px rgba(0,0,0,0.12) }
     }
   </style>
 </head>
 <body>
-  <div class="page">
+  <div class="page" id="page">
     <header class="site-header" role="banner">
       <img src="logo.png" alt="MASONNET logo" class="logo" />
       <h1><strong>Welcome to MASONNET Web <u>3.0</u>!</strong></h1>
     </header>
 
+    <div class="meta" role="contentinfo">
+      <div class="version">Version 1 - In development</div>
+      <div class="authors">by Mason Murphy & MASONNET</div>
+      <div class="contact"> <a href="mailto:masonnet@masonnet.org">Contact Us</a></div>
+    </div>
+
     <hr class="fancy-hr" />
 
     <main class="main" role="main">
-      <p>Clean, modular sections for your prefab demos and viewer components. Replace this paragraph with your actual content. The layout prevents the bottom button island from covering content.</p>
-
-      <!-- Example content to demonstrate scrolling -->
+      <p>Replace this placeholder with your content. Scroll to see the bottom control island remain fixed and the view counter track visits.</p>
       <div style="height:900px;margin-top:20px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:8px;padding:18px;">
-        <p style="opacity:0.9">Long form content placeholder — scroll to see the fixed island remain visible and content stay readable above it.</p>
+        <p style="opacity:0.9">Long form content placeholder — scroll to verify responsiveness on phones, foldables, and desktop.</p>
       </div>
     </main>
   </div>
 
+  <!-- View counter badge (uses countapi with local fallback) -->
+  <div class="view-counter" aria-hidden="false" id="viewCounter">
+    <svg class="eye" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke="white" stroke-opacity="0.9" stroke-width="1.2" fill="none"/>
+      <circle cx="12" cy="12" r="3" fill="white" />
+    </svg>
+    <span id="viewsLabel">Views: —</span>
+  </div>
+
+  <!-- Info panel toggled by the i button -->
+  <div class="info-panel" id="infoPanel" role="dialog" aria-hidden="true" aria-live="polite">
+    <div class="row">
+      <div class="version-tag">Version 1 - In development</div>
+      <div class="authors">by Mason Murphy & MASONNET</div>
+    </div>
+    <div class="row"><a class="contact-link" href="mailto:masonnet@masonnet.org">Contact Us</a></div>
+  </div>
+
   <!-- Button Island Container (fixed) -->
-  <div class="button-island" role="navigation" aria-label="Primary navigation">
+  <nav class="button-island" role="navigation" aria-label="Primary navigation">
     <button type="button" aria-label="Home"><span>Home</span></button>
     <button type="button" aria-label="Games"><span>Games</span></button>
     <button type="button" aria-label="Projects"><span>Projects</span></button>
     <button type="button" aria-label="More"><span>More</span></button>
-  </div>
+
+    <button type="button" class="info-btn" id="infoBtn" aria-label="Info">
+      <!-- simple inline i SVG -->
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="12" r="10" fill="none" stroke="white" stroke-opacity="0.95" stroke-width="1.4"/>
+        <rect x="11.4" y="10.2" width="1.2" height="5.5" rx="0.6" fill="white"/>
+        <rect x="11.4" y="7.2" width="1.2" height="1.2" rx="0.6" fill="white"/>
+      </svg>
+    </button>
+  </nav>
+
+  <script>
+    (function(){
+      const viewsLabel = document.getElementById('viewsLabel');
+      const key = 'masonnet.org-views';
+      const countapiNamespace = 'masonnet_org';
+      const countapiKey = 'site_views'; // will create if needed
+      const countapiUrl = `https://api.countapi.xyz/hit/${encodeURIComponent(countapiNamespace)}/${encodeURIComponent(countapiKey)}`;
+
+      function setViews(v){
+        viewsLabel.textContent = 'Views: ' + v.toLocaleString();
+      }
+
+      // Try CountAPI first for an accurate cross-device counter
+      fetch(countapiUrl, {cache: 'no-store'})
+        .then(r => r.ok ? r.json() : Promise.reject(r))
+        .then(data => {
+          if (data && typeof data.value === 'number') {
+            setViews(data.value);
+            try { localStorage.setItem(key, String(data.value)); } catch(e){}
+          } else {
+            throw new Error('invalid');
+          }
+        })
+        .catch(()=> {
+          // Fallback: increment localStorage value per browser (best-effort)
+          try {
+            let v = parseInt(localStorage.getItem(key)||'0',10);
+            v = isNaN(v) ? 1 : v + 1;
+            localStorage.setItem(key, String(v));
+            setViews(v);
+          } catch(e){
+            setViews('—');
+          }
+        });
+
+      // Info panel toggle with accessibility
+      const infoBtn = document.getElementById('infoBtn');
+      const infoPanel = document.getElementById('infoPanel');
+      let panelVisible = false;
+      function togglePanel(force){
+        panelVisible = typeof force === 'boolean' ? force : !panelVisible;
+        if(panelVisible){
+          infoPanel.classList.add('visible');
+          infoPanel.setAttribute('aria-hidden','false');
+          infoBtn.setAttribute('aria-expanded','true');
+        } else {
+          infoPanel.classList.remove('visible');
+          infoPanel.setAttribute('aria-hidden','true');
+          infoBtn.setAttribute('aria-expanded','false');
+        }
+      }
+      infoBtn.addEventListener('click', ()=> togglePanel());
+      // close panel on outside click or Escape
+      document.addEventListener('click', (e)=> {
+        if(!panelVisible) return;
+        if(infoPanel.contains(e.target) || infoBtn.contains(e.target)) return;
+        togglePanel(false);
+      }, {capture:true});
+      document.addEventListener('keydown', (e)=> { if(e.key === 'Escape') togglePanel(false); });
+
+      // Ensure infoPanel doesn't overlap important content on very small screens:
+      function adjustInfoPanelPosition(){
+        const iw = infoPanel.offsetWidth;
+        const win = window.innerWidth;
+        if(iw > win - 40) {
+          infoPanel.style.width = (win - 40) + 'px';
+        } else {
+          infoPanel.style.width = '';
+        }
+      }
+      window.addEventListener('resize', adjustInfoPanelPosition);
+      adjustInfoPanelPosition();
+
+      // Minimal progressive enhancement: keyboard focus for info button
+      infoBtn.addEventListener('keydown', (e)=> {
+        if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); togglePanel(); }
+      });
+
+    })();
+  </script>
 </body>
 </html>
